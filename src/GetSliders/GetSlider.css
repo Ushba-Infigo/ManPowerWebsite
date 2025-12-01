@@ -1,0 +1,23 @@
+
+  .carousel-indicators [data-bs-target] {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white; /* light gray */
+    margin: 0 5px;
+    border: 1px solid rgba(50, 72, 184, 1);
+    opacity: 1;
+    transition: all 0.3s ease;
+    margin-top: 15px !important;
+  }
+
+  .carousel-indicators .active {
+    width: 38px;   
+    height: 10px;
+    border-radius: 30px;
+    background-color:rgba(50, 72, 184, 1); 
+  }
+
+  .carousel-indicators {
+    margin-bottom: -30px; 
+  }
