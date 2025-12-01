@@ -65,7 +65,7 @@ const IndustriesServicesHeaders = () => {
               data-bs-target={`#${tab.Tab?.toLowerCase().replace(/\s+/g, "-")}`}
               type="button"
               role="tab"
-            >
+            >Ushba
               {tab.Tab}
             </button>
           </li>
