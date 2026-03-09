@@ -1,17 +1,36 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const PartenersSchema=new mongoose.Schema({
-
-
-_id:{type:String,required:true},
-P_Tag:{type:String,required:true},
-P_Heading:{type:String,required:true},
-P_Description:{type:String,required:true},
-P_Image:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-
-
-
+const partnersSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Partners'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  ImagePath: {
+    type: String,
+    required: false
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
-export default mongoose.model("Partners",PartenersSchema,"Partners");
+
+partnersSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
+
+export default mongoose.model('Partners', partnersSchema);

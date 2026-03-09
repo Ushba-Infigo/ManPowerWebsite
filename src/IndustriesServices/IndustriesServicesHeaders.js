@@ -1,178 +1,180 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
 const IndustriesServicesHeaders = () => {
-  const [industryheader, setIndustryHeader] = useState([]);
-  const [industrytabs, setIndustryTabs] = useState([]);
+  const refreshKey = useContext(RefreshContext);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    // Fetch industry header
-    const GetIndustryHeader = async () => {
+    const fetchIndustries = async () => {
       try {
-        const { data } = await axios.get("http://localhost:8001/api/IndustriesHeader");
-        setIndustryHeader(data);
+        const res = await axios.get("http://83.147.38.201:8001/api/IndustriesHeader");
+        setData(res.data[0]); // single document
       } catch (error) {
-        console.log("Error while fetching industry header:", error);
+        console.log("Error fetching industries:", error);
       }
     };
 
-    // Fetch tabs data
-    const GetIndustryTabs = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:8001/api/IndustriesTabs");
-        setIndustryTabs(data);
-      } catch (error) {
-        console.log("Error while fetching industry tabs:", error);
-      }
-    };
+    fetchIndustries();
+  }, [refreshKey]);
 
-    GetIndustryHeader();
-    GetIndustryTabs();
-  }, []);
+  const BulletIcon = () => (
+    <svg
+      style={{ marginTop: "13px" }}
+      width="24"
+      height="43"
+      viewBox="0 0 24 43"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_305_379)">
+        <mask
+          id="mask0_305_379"
+          style={{ maskType: "luminance" }}
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="5"
+          width="13"
+          height="15"
+        >
+          <path d="M12.7744 5.85962H0V19.507H12.7744V5.85962Z" fill="white" />
+        </mask>
+        <g mask="url(#mask0_305_379)">
+          <path
+            d="M4.61483 19.5075C7.16353 19.5075 9.22965 17.4414 9.22965 14.8926C9.22965 12.344 7.16353 10.2778 4.61483 10.2778C2.06612 10.2778 0 12.344 0 14.8926C0 17.4414 2.06612 19.5075 4.61483 19.5075Z"
+            fill="#89CBEB"
+          />
+          <path
+            d="M12.7748 11.5172L2.9751 5.85962V17.1757L12.7748 11.5172Z"
+            fill="#3248B8"
+          />
+        </g>
+      </g>
+      <defs>
+        <clipPath id="clip0_305_379">
+          <rect
+            width="12.8"
+            height="13.6533"
+            fill="white"
+            transform="translate(0 5.85962)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  const parseDescription = (html) => {
+    if (!html) return { text: "", bullets: [] };
 
-  if (industryheader.length === 0) return null;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
 
-  const headerData = industryheader[0];
+    // Extract bullets
+    const bullets = [...doc.querySelectorAll("li")].map(li => li.textContent.trim());
+
+    // Remove ul/li from main text
+    doc.querySelectorAll("ul").forEach(el => el.remove());
+
+    const text = doc.body.textContent.trim();
+
+    return { text, bullets };
+  };
+
+  if (!data) return null;
+
+  const { TagHeading, MainHeading, Industries } = data;
 
   return (
     <div className="industries-section">
+      {/* Header */}
       <div className="section-header">
-        <center>
-          <div className="section-subtitle">{headerData.Industry_Tag}</div>
-        </center>
+        <center><div className="section-subtitle">{TagHeading}</div></center>
         <br />
-        <h1 className="section-title">{headerData.Industry_Heading}</h1>
-        <br />
+        <h1 className="section-title">{MainHeading}</h1><br />
       </div>
 
-      {/*  Navigation Tabs */}
+      {/* Tabs */}
       <ul
-        className="nav nav-tabs"
-        id="industryTabs"
+        className="nav nav-tabs mt-4"
         role="tablist"
         style={{
           backgroundColor: "rgba(235, 236, 247, 1)",
           borderRadius: "12px",
-          justifyContent:"left"
+          justifyContent: "left",
         }}
       >
-        {industrytabs.map((tab, index) => (
-          <li className="nav-item" role="presentation" key={index}>
+        {Industries.map((item, index) => (
+          <li className="nav-item" key={item._id}>
             <button
-              className={`ms-lg-3 nav-link ${index === 0 ? "active" : ""}`}
-              id={`${tab.Tab?.toLowerCase().replace(/\s+/g, "-")}-tab`}
+              className={`nav-link ${index === 0 ? "active" : ""}`}
               data-bs-toggle="tab"
-              data-bs-target={`#${tab.Tab?.toLowerCase().replace(/\s+/g, "-")}`}
+              data-bs-target={`#tab-${index}`}
               type="button"
-              role="tab"
-            >Ushba
-              {tab.Tab}
+            >
+              {item.Name}
             </button>
           </li>
         ))}
       </ul>
 
-      <br />
+      {/* Tab Content */}
+      <div className="tab-content mt-4">
+        {Industries.map((item, index) => {
+          const { text, bullets } = parseDescription(item.Description);
 
-      {/* ✅ Tab Content */}
-      <div className="tab-content" id="industryTabContent">
-        {industrytabs.map((tab, index) => (
-          <div
-            className={`tab-pane fade ${index === 0 ? "show active" : ""}`}
-            id={tab.Tab?.toLowerCase().replace(/\s+/g, "-")}
-            role="tabpanel"
-            key={index}
-          >
-            <div className="industry-content">
-              <div className="content-text">
-                <h2>{tab.Tab_Heading}</h2>
-                <br />
-                <p>{tab.Tab_Description}</p>
-
-                <ul className="features-list">
-                  {tab.Tab_Bullets?.split(".").map((bullet, i) =>
-                    bullet.trim() ? (
-                      <li key={i} style={{marginTop:"-17px"}}>
-                        <svg
-                          style={{
-                            marginTop: "13px",
-                            width: "24px",
-                            height: "43px",
-                          }}
-                          viewBox="0 0 24 43"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clipPath="url(#clip0_305_379)">
-                            <mask
-                              id="mask0_305_379"
-                              style={{ maskType: "luminance" }}
-                              maskUnits="userSpaceOnUse"
-                              x="0"
-                              y="5"
-                              width="13"
-                              height="15"
-                            >
-                              <path
-                                d="M12.7744 5.85962H0V19.507H12.7744V5.85962Z"
-                                fill="white"
-                              />
-                            </mask>
-                            <g mask="url(#mask0_305_379)">
-                              <path
-                                d="M4.61483 19.5075C7.16353 19.5075 9.22965 17.4414 9.22965 14.8926C9.22965 12.344 7.16353 10.2778 4.61483 10.2778C2.06612 10.2778 0 12.344 0 14.8926C0 17.4414 2.06612 19.5075 4.61483 19.5075Z"
-                                fill="#89CBEB"
-                              />
-                              <path
-                                d="M12.7748 11.5172L2.9751 5.85962V17.1757L12.7748 11.5172Z"
-                                fill="#3248B8"
-                              />
-                            </g>
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_305_379">
-                              <rect
-                                width="12.8"
-                                height="13.6533"
-                                fill="white"
-                                transform="translate(0 5.85962)"
-                              />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                        <span>{bullet.trim()}.</span>
+          return (
+            <div
+              key={item._id}
+              className={`tab-pane fade ${index === 0 ? "show active" : ""}`}
+              id={`tab-${index}`}
+            >
+              <div className="industry-content d-flex align-items-center" style={{ gap: "20px" }}>
+                {/* Text */}
+                <div className="content-text" style={{ flex: 1 }}>
+                  <h2>{item.IndustryHeading}</h2>
+                  <p>{text}</p>
+                  <ul className="features-list">
+                    {bullets.map((b, i) => (
+                      <li key={i} style={i > 0 ? { marginTop: '-17px' } : {}}>
+                        <BulletIcon />
+                        <span>{b}</span>
                       </li>
-                    ) : null
-                  )}
-                </ul>
+                    ))}
+                  </ul>
+                  <button
+                    className="explore-btn"
+                    style={{
+                      width: "191px",
+                      fontSize: "13px",
+                      backgroundColor: "rgba(50, 72, 184, 1)",
+                    }}
+                  >
+                    Explore all Services
+                  </button>
+                </div>
 
-                <button
-                  className="explore-btn"
-                  style={{
-                    width: "191px",
-                    fontSize: "13px",
-                    backgroundColor: "rgba(50, 72, 184, 1)",
-                  }}
-                >
-                  Explore all Services
-                </button>
+                {/* Image */}
+                <div className="content-image" style={{ flex: 1 }}>
+                  <div className="image-wrapper huid">
+                    <img
+                      src={
+                        item.ImagePath
+                          ? `http://83.147.38.201:8002/uploads/industries/${item.ImagePath}`
+                          : "/img/tab1.png"
+                      }
+                      alt={item.Name}
+                      className="hud"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </div>
+                </div>
               </div>
-                        <div className="content-image">
-                        <div className="image-wrapper huid">
-                            <img 
-                            src={tab.Tab_Image
-                            ?`${process.env.PUBLIC_URL}/img/${tab.Tab_Image}`
-                            :`${process.env.PUBLIC_URL}/img/tab1.png}`
-
-                            }
-                            className="hud"
-                            alt="Healthcare"/>
-                        </div>
-                    </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+
       </div>
+      <br /><br />
     </div>
   );
 };

@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+Server running on port \\.\pipe\869468e9-624d-4d78-8477-df45ce79e558
+DB Connected Successfully

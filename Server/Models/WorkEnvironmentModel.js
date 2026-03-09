@@ -1,20 +1,42 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-
-
-const EnvironmentSchema = new mongoose.Schema({
-
-_id: { type: String, required: true },
-Tag: { type: String, required: true },
-Heading: { type: String, required: true },
-Description: { type: String, required: true },
-Description_Details: { type: [String], default: [] },
-Images: { type: [String], default: [] },
-  CreatedAt: { type: Date, default: Date.now },
-  UpdatedAt: { type: Date, default: Date.now }
-
-
+const workEnvironmentSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Our Work Environment'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  Images: [{
+    ImagePath: {
+      type: String,
+      required: false
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const WorkEnvironments=mongoose.model("WorkEnvironment",EnvironmentSchema,"WorkEnvironment");
-export{WorkEnvironments};
+workEnvironmentSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
+
+export default mongoose.model('WorkEnvironment', workEnvironmentSchema);

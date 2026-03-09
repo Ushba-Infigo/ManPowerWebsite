@@ -11,11 +11,12 @@ Heading: { type: String, required: true },
 Location: { type: String, required: true },
 PhoneNo: { type: String, required: true },
 Email: { type: String, required: true },
+Country: { type: String, required: false},
 Attachment: { type: String, required: true },
 CreatedAt: { type: String, required: true },
 UpdatedAt: { type: String, required: true },
 });
 
 
-const ContactUsModel=mongoose.model("GetInTouch",ContactUschema,"GetInTouch");
+const ContactUsModel=mongoose.model("GetInTouchs",ContactUschema,"GetInTouchs");
 export{ContactUsModel};

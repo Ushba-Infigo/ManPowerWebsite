@@ -1,222 +1,313 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
+
+import { io } from "socket.io-client";
 
 const GetInsightsDetailsData = () => {
-  const [Insights, setGetInsights] = useState([]);
+  const [insightsData, setInsightsData] = useState([]);
+  const [expandedLatest, setExpandedLatest] = useState({});
+  const [expandedCards, setExpandedCards] = useState({});
 
-  // Always define hooks first
-  useEffect(() => { 
-    const GetInsightsAll = async () => {
-      try {
-        const GetResponse = await axios.get("http://localhost:8001/api/GetInsights");
-        setGetInsights(GetResponse.data);
-      } catch (error) {
-        console.log("Error while fetching FAQs", error);
-      }
+  const fetchInsights = async () => {
+    try {
+      const response = await axios.get("http://83.147.38.201:8001/api/GetInsights");
+      const data = response.data;
+
+      // Collect unique UserIds from all InsightCards
+      const allCards = data.flatMap(d => d.InsightCards || []);
+      const uniqueUserIds = [...new Set(allCards.map(c => c.UserId).filter(Boolean))];
+
+      // Fetch user data for each unique UserId
+      const userMap = {};
+      await Promise.all(
+        uniqueUserIds.map(async (uid) => {
+          try {
+            const userRes = await axios.get(`http://83.147.38.201:8001/api/GetUser/${uid}`);
+            userMap[uid] = userRes.data;
+          } catch (err) {
+            console.log(`Error fetching user ${uid}:`, err);
+          }
+        })
+      );
+
+      // Merge user data into each InsightCard
+      const enrichedData = data.map(insight => ({
+        ...insight,
+        InsightCards: (insight.InsightCards || []).map(card => ({
+          ...card,
+          UserData: userMap[card.UserId] || null
+        }))
+      }));
+
+      setInsightsData(enrichedData);
+    } catch (error) {
+      console.log("Error while fetching insights", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInsights();
+
+    // Listen for real-time updates from backend
+    const socket = io("http://83.147.38.201:8001");
+
+    socket.on("insightsUpdated", () => {
+      console.log("Real-time update received! Refreshing insights details...");
+      fetchInsights();
+    });
+
+    return () => {
+      socket.disconnect();
     };
-    GetInsightsAll();
   }, []);
 
-useEffect(() => {
-  const backToTop = document.getElementById('backToTop');
-  if (!backToTop) return;
+  // Back to top button
+  useEffect(() => {
+    const backToTop = document.getElementById("backToTop");
+    if (!backToTop) return;
 
-  const handleScroll = () => {
-    if (window.scrollY > 200) backToTop.style.display = 'block';
-    else backToTop.style.display = 'none';
-  };
+    const handleScroll = () => {
+      backToTop.style.display = window.scrollY > 200 ? "block" : "none";
+    };
+    const handleClick = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    window.addEventListener("scroll", handleScroll);
+    backToTop.addEventListener("click", handleClick);
 
-  window.addEventListener('scroll', handleScroll);
-  backToTop.addEventListener('click', handleClick);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      backToTop.removeEventListener("click", handleClick);
+    };
+  }, []);
 
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    backToTop.removeEventListener('click', handleClick);
-  };
-}, []);
+  if (!insightsData || insightsData.length === 0) return null;
+  const data = insightsData[0];
+  const insightCards = data?.InsightCards || [];
 
-    if (!Insights || Insights.length === 0) return null;
-  const data = Insights[0];
-  const InsightsList = data?.Insights_List || [];
- 
-//  1-Find the latest publish date
-const latestDate = new Date(
-  Math.max(...InsightsList.map(item => new Date(item.PublishDate)))
-);
+  // 1 - Find the latest publish date
+  const latestDate = new Date(
+    Math.max(
+      ...insightCards.map(item => item.UploadDate ? new Date(item.UploadDate) : 0)
+    )
+  );
 
-// 2- Filter items that have this latest date
-const latestInsights = InsightsList.filter(
-  item => new Date(item.PublishDate).getTime() === latestDate.getTime()
-);
+  // 2 - Filter items with latest date
+  const latestInsights = insightCards.filter(
+    item => item.UploadDate && new Date(item.UploadDate).getTime() === latestDate.getTime()
+  );
 
-// Sort all insights by PublishDate descending (latest first)
-const sortedInsights = [...InsightsList].sort(
-  (a, b) => new Date(b.PublishDate) - new Date(a.PublishDate)
-);
-  return(
-  
-  <>
+  // Sort all insights by UploadDate descending (latest first)
+  const sortedInsights = [...insightCards].sort(
+    (a, b) => new Date(b.UploadDate) - new Date(a.UploadDate)
+  );
+
+  return (
+    <>
+      {/* Banner */}
       <div className="overflow-hidden" style={{ marginTop: "-75px" }}>
-      <img
-        src={`${process.env.PUBLIC_URL}/img/vector.png`}
-        alt="Contact Us Banner"
-        style={{ width: "100%", height: "auto", display: "block" }}
-      />
-    </div>
-    <center style={{marginTop: "-84px"}}>
-      <span>
-    <Link to="/" className="home" style={{textDecoration: "none",cursor:"pointer"}}>Home</Link>&nbsp;&gt;&nbsp;
-     <span className="contact">Insights</span>
-      </span>
-    </center>
-<center>
-    <p className="flexible">Our Latest Updates and Insights</p>
-</center>
- 
-     <div>
-      <br/>  <br/>
-  {latestInsights.map((latestinsight, index) => (
-    <div
-      key={index}
-      style={{ overflowX: "hidden", paddingLeft: "60px", paddingRight: "10px" }}
-    >
-      <div
-        className="row align-items-center homs g-7"
-        style={{ "--bs-gutter-x": "3.5rem" }}
-      >
-        <div className="col-md-6 text-center mb-4 mb-md-0">
-          <img
-            src={
-              latestinsight.CoverImage
-                ? `${process.env.PUBLIC_URL}/img/${latestinsight.CoverImage}`
-                : `${process.env.PUBLIC_URL}/img/card1.png`
-            }
-            alt="Image"
-            className="img-fluid rounded"
-            style={{ display: "block", margin: "0 auto", width: "600px" }}
-          />
-        </div>
-
-        <div className="col-md-6" style={{marginTop:"-10%"}}>
-          <div className="section-subtitlee mb-4">
-            {latestinsight.PublishDate}
-          </div><br/>
-          <p className="smart">{latestinsight.Title}</p>
-          <p className="hgs" style={{ width: "87%" }}>
-            {latestinsight.Description}
-            <br />
-          </p>
-          <br />
-          <Link to={`/GetArticalInsights/${latestinsight._id}`} className="learnsi">
-            Read Article
-            <i className="bi bi-arrow-right ms-2 fs-5 text-center"></i>
-          </Link>
-          <br />
-        </div>
+        <img
+          src={`${process.env.PUBLIC_URL}/img/vector.png`}
+          alt="Insights Banner"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
       </div>
-    </div>
-  ))}
 
+      {/* Breadcrumb */}
+      <center style={{ marginTop: "-84px" }} className="homecrumb">
+        <span>
+          <Link to="/" className="home" style={{ textDecoration: "none", cursor: "pointer" }}>Home</Link>
+          &nbsp;&gt;&nbsp;
+          <span className="contact">Insights</span>
+        </span>
+      </center>
 
-    </div>
-      <div style={{ padding: "4rem", marginTop: "-30px" }}>
-        <div className="row g-4">
-            {sortedInsights.map((insight, index) => (
-           <div className="col-12 col-md-4" style={{ paddingBottom: "6px" }} key={index}>
-            <div className="card w-60">
-              <img
-                //src="./img/card1.png"
-                       src={
-                        insight.CoverImage
-                        ?`${process.env.PUBLIC_URL}/img/${insight.CoverImage}`
-                        :`${process.env.PUBLIC_URL}/img/card1.png}`
-                     }
-                className="card-img-top p-3"
-                alt="Design"
-              />
-              <div className="card-body" style={{ marginTop: "-30px" }}>
-                <h5 className="card-title">{insight.Category}</h5>
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}
-                >
-                  <p className="Ux" style={{ margin: 0 }}>
-                    {insight.Title}
-                  </p>
-                  <svg
-                    style={{ marginLeft: "35px" }}
-                    width="24"
-                    height="25"
-                    viewBox="0 0 24 25"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M7 17.4395L17 7.43945M17 7.43945H7M17 7.43945V17.4395"
-                      stroke="#051441"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
+      {/* Main Heading */}
+      <center className="mt-3">
+        <p className="flexible">{data?.MainHeading}</p>
+      </center>
 
-                <p className="card-text" style={{ marginTop: "10px" }}>
-                     {insight.Description}
-                  {/* How do you create compelling presentations that wow your
-                  colleagues and impress your managers? */}
-                </p>
-                <br />
+      {/* Latest Insights */}
+      <div>
+        <br /> <br />
+        {latestInsights.map((insight, index) => (
+          <div
+            key={index}
+            style={{ paddingLeft: "30px", paddingRight: "30px" }}
+          >
+            <div
+              className="row homs g-7"
+              style={{ "--bs-gutter-x": "3.5rem" }}
+            >
+              {/* Image Column */}
+              <div className="col-md-6 text-center ">
+                <img
+                  src={
+                    insight.ImagePath
+                      ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                      : `${process.env.PUBLIC_URL}/img/card1.png`
+                  }
+                  alt="Insight"
+                  className="img-fluid rounded isigntimage"
+                  style={{ display: "block", margin: "0 auto", width: "85%", height: '60%' }}
+                />
+              </div>
 
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <img
-                     src={
-                        insight.AuthorImage
-                        ?`${process.env.PUBLIC_URL}/img/${insight.AuthorImage}`
-                        :`${process.env.PUBLIC_URL}/img/inner.png}`
-                     }
-                    alt="Author"
-                    style={{ width: "41px", height: "41px" }}
-                  />
-                  <p className="aliya" style={{ marginTop: "-4px" }}>
-                    {insight.AuthorName}
-                  </p>
-                </span>
+              {/* Text Column */}
+              <div className="col-md-6 mt-4">
+                <div className="section-subtitlee mb-3">
+                  {insight.UploadDate
+                    ? new Date(insight.UploadDate).toLocaleDateString()
+                    : ""}
+                </div>
+
+                <p className="smart insightheading">{insight.BlogHeading}</p>
+
                 <p
-                  className="aug"
-                  style={{ marginTop: "-26px", marginLeft: "54px" }}
+                  className="hgs mt-3"
+                  style={{
+                    width: "87%",
+                    marginBottom: 0,
+                    ...(!expandedLatest[index] && {
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }),
+                  }}
                 >
-                   {insight.PublishDate}
+                  {insight?.Description
+                        ? new DOMParser()
+                            .parseFromString(insight?.Description, "text/html")
+                            .body.textContent
+                        : ""}
                 </p>
+                <span
+                  onClick={() => setExpandedLatest(prev => ({ ...prev, [index]: !prev[index] }))}
+                  style={{ color: "#007bff", cursor: "pointer", fontSize: "13px", fontWeight: "500" }}
+                >
+                  {expandedLatest[index] ? "Show Less" : "... Read More"}
+                </span>
+
+                <div>
+
+                  <Link
+                    to={`/GetArticalInsights/${btoa(insightCards.indexOf(insight).toString())}/${btoa(insight.UserId)}`}
+                    className="learnsi d-inline-flex align-items-center mt-2"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Read Article
+                    <i className="bi bi-arrow-right ms-2 fs-5"></i>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
 
-            ))}
-       
+          </div>
+        ))}
+      </div>
+
+      {/* All Insights Grid */}
+      <div style={{ padding: "1rem", marginTop: "6px" }}>
+        <div className="row g-4">
+          {sortedInsights.map((insight, index) => (
+            <div className="col-12 col-md-4" style={{ paddingBottom: "6px" }} key={index}>
+              <div className="card w-60">
+                <img
+                  src={insight.ImagePath
+                    ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                    : `${process.env.PUBLIC_URL}/img/card1.png`}
+                  className="card-img-top p-3"
+                  alt="Insight" style={{ height: "300px" }}
+                />
+                <div className="card-body" style={{ marginTop: "-30px" }}>
+                  <h5 className="card-title">{insight.IndustryHeading}</h5>
+                  <Link to={`/GetArticalInsights/${btoa(insightCards.indexOf(insight).toString())}/${btoa(insight.UserId)}`} style={{ textDecoration: "none" }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                      <p className="Ux" style={{ margin: 0 ,textAlign:"left"}}>{insight.BlogHeading}</p>
+                      <svg
+                        style={{ marginLeft: "35px" }}
+                        width="24"
+                        height="25"
+                        viewBox="0 0 24 25"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 17.4395L17 7.43945M17 7.43945H7M17 7.43945V17.4395"
+                          stroke="#051441"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+
+                  </Link>
+
+                  <p
+                    className="card-text"
+                    style={{
+                      marginTop: "10px",
+                      color: "rgb(102, 102, 102)",
+                      fontSize: "13px",
+                      whiteSpaceCollapse: "collapse",
+                      marginBottom: 0,
+                      ...(!expandedCards[index] && {
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                    }}
+                  >
+                     {insight?.Description
+                        ? new DOMParser()
+                            .parseFromString(insight?.Description, "text/html")
+                            .body.textContent
+                        : ""}
+                  </p>
+                  <span
+                    onClick={() => setExpandedCards(prev => ({ ...prev, [index]: !prev[index] }))}
+                    style={{ color: "#007bff", cursor: "pointer", fontSize: "13px", fontWeight: "500" }}
+                  >
+                    {expandedCards[index] ? "Show Less" : "... Read More"}
+                  </span>
+                  <div className="d-flex align-items-center gap-2 mt-3">
+                    <img
+                      src={insight.UserData?.ProfilePic
+                        ? `http://83.147.38.201:8002${insight.UserData.ProfilePic}`
+                        : `${process.env.PUBLIC_URL}/img/inner.png`}
+                      alt="Author"
+                      width="40"
+                      height="40"
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                    />
+
+                    <div>
+                      <p className="mb-0" style={{ fontSize: '12px' }}>{insight.UserData?.username || insight.UserName}</p>
+                      <small style={{ fontSize: '12px' }}>
+                        {insight.UploadDate
+                          ? new Date(insight.UploadDate).toLocaleDateString()
+                          : ""}
+                      </small>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-   
 
-    <center>
- 
-</center>
-  <button id="backToTop">  <i class="bi bi-arrow-up"></i>
-</button>
-  </>)
-}
+    </>
+  );
+};
+
 export default GetInsightsDetailsData;

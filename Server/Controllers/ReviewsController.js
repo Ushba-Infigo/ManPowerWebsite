@@ -1,8 +1,8 @@
-import { ClientsReviewsHeaders,ReviewDetail } from "../Models/ReviewsModel.js";
+import ReviewModel from '../Models/ReviewsModel.js';
 
 export const GetClientsReviewsHeaderData = async (req, res) => {
   try {
-    const GetClientsReviews = await ClientsReviewsHeaders.find();
+    const GetClientsReviews = await ReviewModel.find();
 
     if (!GetClientsReviews || GetClientsReviews.length === 0) {
       return res.status(404).json({ message: "Data not Exist" });
@@ -15,7 +15,7 @@ export const GetClientsReviewsHeaderData = async (req, res) => {
 };
 export const GetClientsReviewsData = async (req, res) => {
   try {
-    const GetClientsReviews = await ReviewDetail.find();
+    const GetClientsReviews = await ReviewModel.find();
 
     if (!GetClientsReviews || GetClientsReviews.length === 0) {
       return res.status(404).json({ message: "Data not Exist" });

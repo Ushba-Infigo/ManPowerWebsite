@@ -1,4 +1,4 @@
-import {WorkEnvironments} from '../Models/WorkEnvironmentModel.js'
+import WorkEnvironments from '../Models/WorkEnvironmentModel.js'
 
 export const GetWorkEnvironmentsData=async(req,res)=>{
 

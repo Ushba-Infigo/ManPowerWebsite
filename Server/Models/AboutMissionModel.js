@@ -1,28 +1,72 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Detail=new mongoose.Schema({
-
-
-_id:{type:String,required:true},
-Tab_Heading:{type:String,required:true},
-Tab_Description:{type:String,required:true},
-Tab_Attachment:{type:String,required:true},
-
-
+const missionSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'About Mission'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Tabs: {
+    Mission: {
+      TabHeading: {
+        type: String,
+        required: true
+      },
+      Description: {
+        type: String,
+        required: true
+      },
+      ImagePath: {
+        type: String,
+        required: false
+      }
+    },
+    Vision: {
+      TabHeading: {
+        type: String,
+        required: true
+      },
+      Description: {
+        type: String,
+        required: true
+      },
+      ImagePath: {
+        type: String,
+        required: false
+      }
+    },
+    Goals: {
+      TabHeading: {
+        type: String,
+        required: true
+      },
+      Description: {
+        type: String,
+        required: true
+      },
+      ImagePath: {
+        type: String,
+        required: false
+      }
+    }
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const MissionDetailSchema=new mongoose.Schema({
-
-
-
-_id:{type:String,required:true},
-Tag:{type:String,required:true},
-Heading:{type:String,required:true},
-Detail:[Detail],
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-    
+missionSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
 
-const MissionDetail=mongoose.model("AboutMission",MissionDetailSchema,"AboutMission");
-export {MissionDetail};
+export default mongoose.model('Mission', missionSchema);

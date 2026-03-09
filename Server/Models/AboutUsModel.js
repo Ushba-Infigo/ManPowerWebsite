@@ -1,54 +1,50 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const AboutUsDetailSchema= new mongoose.Schema({
-    
-Detail_Description :{
-    type:String,
-    required:true
-}
-
+const aboutUsSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'About Us'
+  },
+  Heading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  ImagePath: {
+    type: String,
+    required: false
+  },
+  Counters: [{
+    Heading: {
+      type: String,
+      required: true
+    },
+    Value: {
+      type: String,
+      required: true
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
-const AboutUsCounterSchema= new mongoose.Schema({
-    
-Counter :{
-    type:String,
-    required:true
-},
-Counter_Desc :{
-    type:String,
-    required:true
-}
+
+aboutUsSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
-const AboutUsSchema= new mongoose.Schema({
 
-About_Heading:{
-    type:String,
-    required:true
-
-},
-About_Description:{
-    type:String,
-    required:true
-},
-About_Image:{
-    type:String,
-    required:true
-},
-About_Tag:{
-    type:String,
-    required:true
-},
-About_Detail:[AboutUsDetailSchema],
-
-Detail_Counter:[AboutUsCounterSchema],
-CreatedAt:{
-    type:String,
-    required:true
-},
-UpdateddAt:{
-    type:String,
-    required:true
-}
-});
-//Force it to use the "AboutUs" collection exactly as in Compass
-export default mongoose.model("AboutUs",AboutUsSchema,"AboutUs")
+export default mongoose.model('AboutUs', aboutUsSchema);

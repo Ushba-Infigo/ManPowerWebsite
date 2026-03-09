@@ -1,4 +1,4 @@
-import {Insights} from "../Models/InsightsModel.js";
+import Insights from "../Models/InsightsModel.js";
 
 export const GetInsightsData = async (req, res) => {
   try {

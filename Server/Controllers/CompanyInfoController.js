@@ -1,8 +1,13 @@
-import CompanyInfoschema from "../Models/CompanyInfoModel.js";
+import getInTouchSchema from "../Models/CompanyInfoModel.js";
 
 export const GetCompanyInfoData = async (req, res) => {
   try {
-    const GetCompanyInfo= await CompanyInfoschema.find();
+    const { country } = req.query;
+    let query = {};
+    if (country) {
+      query.Country = country;
+    }
+    const GetCompanyInfo = await getInTouchSchema.find(query);
 
     if (!GetCompanyInfo || GetCompanyInfo.length === 0) {
       return res.status(404).json({ message: "Data not Exist" });

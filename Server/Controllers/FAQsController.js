@@ -1,4 +1,4 @@
-import {FAQs} from "../Models/FAQsModel.js";
+import FAQs from "../Models/FAQsModel.js";
 
 export const GetFAQsData = async (req, res) => {
   try {

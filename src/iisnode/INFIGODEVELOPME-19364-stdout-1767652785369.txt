@@ -1,0 +1,4 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+Mongo URI: mongodb+srv://aurangzaib_db_user:V6ud6jg3WOuTOWJ2@cluster0.somgtdb.mongodb.net/cms_auth_db
+Server running on port \\.\pipe\d1e8c4ae-6111-4369-ae17-0bfba9d4f4ff
+DB Connected Successfully

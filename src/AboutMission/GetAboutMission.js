@@ -1,29 +1,30 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
-const GetMissionAllData=()=>{
+const GetMissionAllData = () => {
+    const refreshKey = useContext(RefreshContext);
+    const [Mission, setMission] = useState([]);
 
-const [Mission,setMission]=useState([]);
+    useEffect(() => {
 
-useEffect(()=>{
+        const GetMission = async () => {
+            try {
 
-    const GetMission=async()=>{
-try{
-
-    const GetMissionAPI= await axios.get('http://localhost:8001/api/GetMission');
-    setMission(GetMissionAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
+                const GetMissionAPI = await axios.get('http://83.147.38.201:8001/api/GetMission');
+                setMission(GetMissionAPI.data);
+            }
+            catch (error) {
+                console.log("error while fetching")
+            }
         }
-GetMission();
-},[]);
+        GetMission();
+    }, [refreshKey]);
 
-if(Mission.length==0){
-    return null
+    if (Mission.length == 0) {
+        return null
+    }
+    const data = Mission[0];
+    return (<></>)
 }
- const data=Mission[0];
-return(<></>)}
 export default GetMissionAllData;

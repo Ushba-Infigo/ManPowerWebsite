@@ -1,102 +1,103 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
 const GetCompanyCaltureDetailData = () => {
-  const [companycalturedetail, setcompanycalturedetail] = useState([]);
+  const refreshKey = useContext(RefreshContext);
+  const [companyCulture, setCompanyCulture] = useState([]);
 
   useEffect(() => {
-    const getData = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8001/api/GetCompanyCaltureDetail");
-        setcompanycalturedetail(res.data);
+        const res = await axios.get("http://83.147.38.201:8001/api/GetCompanyCaltureDetail");
+        setCompanyCulture(res.data);
       } catch (err) {
         console.log("Error fetching:", err);
       }
     };
+    fetchData();
+  }, [refreshKey]);
 
-    getData();
-  }, []);
+  const data = companyCulture[0] || {};
 
-  const data = companycalturedetail[0] || {};
-
-  const tabs = [
-    { key: "AllMoments", data: data.AllMoments },
-    { key: "TeamWork", data: data.TeamWork },
-    { key: "CompanyEvents", data: data.CompanyEvents },
-    { key: "TrainingAndDevelopment", data: data.TrainingAndDevelopment },
-    { key: "Celebration", data: data.Celebration },
-  ];
+  // Define tabs dynamically based on ImageType
+  const tabs = ["Company Event", "New Year", "Team Building", "Office Space", "Achievement", "Other"];
 
   return (
     <>
       {/* Header */}
       <div
-        style={{
-          backgroundImage: "url('./img/graph.png'), url('./img/right.png')",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "top left, top right",
-          backgroundSize: "80px auto",
-        }}
+        className="culture-header-section"
       >
-        <center>
-          <div className="section-subtitleo">{data.Tag}</div>
+        <center >
+          <div className="section-subtitleo">{data.TagHeading}</div>
         </center>
-<br/>
-        <center>
+        <br />
+        <div className="text-center">
           <p className="expert">{data.Heading}</p>
-        </center>
-
-        <center>
-          <p className="text-center collaborate">{data.Description}</p>
-        </center>
+        </div>
+        <div className="text-center">
+          <p className="text-center collaborate culture-description Culturesetting" 
+          style={{ paddingLeft: '25%', paddingRight: '25%' }}>
+            {/* {data.Description} */}
+             {data.Description
+                ? new DOMParser()
+                    .parseFromString(data.Description, "text/html")
+                    .body.textContent 
+                : ""}
+            </p>
+        </div>
 
         {/* Tabs */}
-        <center>
+        <div className="tabs-container" style={{ paddingLeft: '23%', paddingRight: '23%' }}>
           <ul
-            className="nav nav-tabs2"
+            className="nav nav-tabs2 justify-content-center flex-wrap"
             role="tablist"
-            style={{ width: "900px", marginLeft: "-137px" }}
           >
-            {tabs.map((tab, i) => (
-              <li className="nav-item" key={tab.key}>
+            {tabs.map((tabType, i) => (
+              <li className="nav-item" key={tabType}>
                 <button
                   className={`nav-link ${i === 0 ? "active" : ""}`}
                   data-bs-toggle="tab"
-                  data-bs-target={`#tab-${tab.key}`}
+                  data-bs-target={`#tab-${tabType.replace(/\s+/g, "")}`}
                   type="button"
                   role="tab"
-                  style={{ marginLeft: i === 0 ? "150px" : "0px" }}
+                  style={{ marginLeft: "20px" }}
                 >
-                  {tab.data?.Heading}
+                  {tabType}
                 </button>
               </li>
             ))}
           </ul>
-        </center>
+        </div>
       </div>
 
       {/* Tab Content */}
-      <div className="tab-content my-5" style={{ paddingLeft: "50px", paddingRight: "50px" }}>
-        {tabs.map((tab, i) => (
-          <div
-            key={tab.key}
-            className={`tab-pane fade ${i === 0 ? "show active" : ""}`}
-            id={`tab-${tab.key}`}
-            role="tabpanel"
-          >
-            <div className="row g-0">
-              {tab.data?.Images?.map((img, index) => (
-                <div className="col-3" key={index}>
-                  <img
-                    src={`${process.env.PUBLIC_URL}/img/${img}`}
-                    className="w-100"
-                    alt=""
-                  />
-                </div>
-              ))}
+      <div className="tab-content culture-tab-content my-5">
+        {tabs.map((tabType, i) => {
+          // Filter images by ImageType and IsActive
+          const images = data.Images?.filter(img => img.ImageType === tabType && img.IsActive) || [];
+
+          return (
+            <div
+              key={tabType}
+              className={`tab-pane fade ${i === 0 ? "show active" : ""}`}
+              id={`tab-${tabType.replace(/\s+/g, "")}`}
+              role="tabpanel"
+            >
+              <div className="culture-gallery row" style={{ marginLeft: "3%", marginRight: '3%' }}>
+                {images.map((img, index) => (
+                  <div className="gallery-item col-sm-3 col-md-3 col-lg-3 imgsize" key={index}>
+                    <img
+                      src={`http://83.147.38.201:8002/uploads/company-culture/${img.ImagePath}`}
+                      alt={tabType}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

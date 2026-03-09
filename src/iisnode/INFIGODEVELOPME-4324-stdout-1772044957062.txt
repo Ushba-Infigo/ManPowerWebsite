@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+Server running on port \\.\pipe\1c6c61e1-f692-468f-aaf6-47d8e2ce47d1
+DB Connected Successfully

@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+Server running on port \\.\pipe\c450a2f1-f592-4eee-8dde-222f67d802b9
+DB Connected Successfully

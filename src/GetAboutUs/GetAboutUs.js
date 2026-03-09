@@ -1,111 +1,90 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
-const GetAboutUsData=()=>{
+const GetAboutUsData = () => {
+  const refreshKey = useContext(RefreshContext);
+  const [aboutus, setAboutUs] = useState([]);
 
-const [aboutus,setaboutus]=useState([]);
-useEffect(()=>{
+  useEffect(() => {
+    const fetchAboutUs = async () => {
+      try {
+        const response = await axios.get("http://83.147.38.201:8001/api/GetAboutUs");
+        setAboutUs(response.data);
+      } catch (error) {
+        console.log("Error while fetching About Us data:", error);
+      }
+    };
 
-    const GetAboutUs=async()=>{
+    fetchAboutUs();
+  }, [refreshKey]);
 
-        try{
-
-    const GetAboutUsfromAPI= await axios.get("http://localhost:8001/api/GetAboutUs")
-    setaboutus(GetAboutUsfromAPI.data);
-        }
-        catch(error)
-        {
-       console.log("error while fetching");
-
-        }
-       }
-
-GetAboutUs()
-},[]);
-
-if (aboutus.length === 0) {
-    return null; // or a loader
+  if (aboutus.length === 0) {
+    return null; // Or you can return a loader/spinner here
   }
 
   const data = aboutus[0];
-return(
+  const Logos = data.Logos || [];
+  const Counters = data.Counters || [];
 
+  return (
+    <div className="container-fluid my-5" style={{ overflowX: "hidden" }}>
+      <div className="row align-items-center" style={{ marginTop: '7%' }}>
+        {/* Left: Image */}
+        <div className="col-md-6 text-center mb-4 mb-md-0" style={{ width: '50%' }}>
+          <img
+            src={
+              data.ImagePath
 
-    <div className="container-fluid my-5" style={{overflowX: "hidden"}}>
-  <div className="row align-items-center">
-<div className="col-md-6 text-center mb-4 mb-md-0 abouting-container">
-  {aboutus.length > 0 && (
-    <img 
-      src={
-        data.About_Image
-          ? `${process.env.PUBLIC_URL}/img/${ aboutus[0].About_Image}`
-          : `${process.env.PUBLIC_URL}/img/about2.png}`
-      } 
-      alt="Image"
-     className="abouting" style={{borderRadius: "32px"}}
-    />
-  )} 
-</div>
-
-    <div className="col-md-6 mt-lg--200">
-      <div className="section-subtitless mb-4">
-          {data.About_Tag}
-          
+                ? `http://83.147.38.201:8002/uploads/about-us/${data.ImagePath}`
+                : "fallback-image.png"
+            }
+            alt="About Us"
+            className="abouting"
+            style={{ borderRadius: '32px', width: '80%', height: '632px' }}
+          />
         </div>
-    <p className="smart">
-    {data.About_Heading.split(' ').map((word, index) => (
-    <React.Fragment key={index}>
-      {word}{' '}
-      {(index + 1) % 3 === 0 && <br />} 
-      {/* Inserts a <br/> after every 3 words */}
-    </React.Fragment>
-  ))}
-</p>
 
-     {/* Split the text into lines */}
-   {aboutus.length > 0 && (
-  <p className="help">
-    {aboutus[0].About_Description.split(' ').map((word, index) => (
-      <>
-        {word + ' '}
-        {(index + 1) % 40=== 0 && <><br/><br/></>} 
-        {/* adds 2 line breaks roughly after 4 visual lines */}
-      </>
-    ))}
-  </p>
-)}
+        {/* Right: Text Content */}
+        <div className="col-md-6 mt-lg--200" style={{ width: '50%' }}>
+          {/* Tag Heading */}
+          <div className="section-subtitless mb-4">
+            {data.TagHeading}
+          </div>
 
-<br/>
+          {/* Main Heading */}
+          <h2 className="smart" >
+            {data.Heading}</h2>
+          {/* Description */}
+           <div className="help" style={{textAlign:"justify",marginRight:"15%"}}>
+              {data.Description
+                ? new DOMParser()
+                    .parseFromString(data.Description, "text/html")
+                    .body.textContent 
+                : ""}
+            </div>
 
-   <div className="d-flex flex-wrap justify-content-start gap-4">
-   <div className="first-crd">
-  <div className="card-body ">
-    <p className="first" id="projects">100+</p>
-    <p className="comp">Projects Completed</p>
-  </div>
-</div>
+          {/* Counters */}
+          <div className="d-flex flex-wrap justify-content-start gap-4 mt-5">
+            {Counters.map((counter, index) => (
+              <div className="first-crd" key={counter._id} style={{ width: counter === 0 ? '192px' : '156px', height: '99px' }}>
+                <div className="card-body">
+                  <p className="first" id={`counter-${index}`}>
+                    {counter.Value}
+                    {index === 0 ? "+" : "%"}
+                  </p>
+                  <p className="comp">{counter.Heading}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-      <div className="first-crd ">
-  <div className="card-body ">
-    <p className="first" id="clients">98%</p>
-    <p className="comp">Client Satisfied</p>
-  </div>
-</div>
-      <div className="first-crd ">
-  <div className="card-body ">
-    <p className="first" id="industry">80%</p>
-    <p className="comp">Industry Project</p>
-  </div>
-</div>
-      </div><br/><br/>
-      <button className="learn">Learn More</button>
-
+          <br /><br />
+          <button className="learn">Learn More</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-);
-}
+  );
+};
 
 export default GetAboutUsData;

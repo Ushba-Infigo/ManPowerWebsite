@@ -34,20 +34,79 @@ function Sidebar() {
             <i className="bi bi-list"></i>
           </button>
 
-          <div className="sidebar" id="sidebar">
-            <div>
-              <center>
-                <div style={{ padding: '20px' }}>
-                  <img src="./img/logo.png" alt="Logo" />
-                </div>
-              </center>
+      <div className="sidebar" id="sidebar">
+      <div>
+        <center>
+          <div style={{ padding: "20px" }}>
+            <img src="./img/logo.png" alt="Logo" style={{height:"55px"}} />
+          </div>
+        </center>
 
-              {/* Navigation */}
-              <div className="nav flex-column mt-0">
-                {/* Your full nav items go here exactly as in HTML */}
+        <div className="nav flex-column mt-0">
+          {/* Homepage dropdown */}
+          <a
+            href="#"
+            className="nav-link d-flex justify-content-between align-items-center"
+            data-bs-toggle="collapse"
+            data-bs-parent="#sideMenu"
+            data-bs-target="#homeMenu"
+            aria-expanded="false"
+          >
+            <span>
+              {/* SVG icon */}
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.7305 2.5H19.7695C20.5255 2.5 20.9296 2.63967 21.1494 2.83496C21.3541 3.01688 21.5 3.33994 21.5 3.98047V8.51953C21.5 9.16055 21.3532 9.48269 21.1494 9.66309C20.9307 9.8565 20.5286 9.99495 19.7734 9.99023H15.7305C14.9731 9.99023 14.5699 9.85208 14.3506 9.6582C14.1471 9.47809 14 9.15645 14 8.50977V3.98047L14.0068 3.75391C14.0376 3.2609 14.1716 2.99409 14.3506 2.83496C14.5704 2.63967 14.9745 2.5 15.7305 2.5Z" stroke="#6D6C6B"/>
+                <path d="M15.7305 14H19.7695C20.5145 14 20.9085 14.1526 21.1279 14.3721C21.3474 14.5915 21.5 14.9855 21.5 15.7305V19.7695C21.5 20.5145 21.3474 20.9085 21.1279 21.1279C20.9085 21.3474 20.5145 21.5 19.7695 21.5H15.7305C14.9855 21.5 14.5915 21.3474 14.3721 21.1279C14.1526 20.9085 14 20.5145 14 19.7695V15.7305C14 14.9855 14.1526 14.5915 14.3721 14.3721C14.5915 14.1526 14.9855 14 15.7305 14Z" stroke="#6D6C6B"/>
+                <path d="M4.23047 2.5H8.26953C9.0255 2.5 9.42961 2.63967 9.64941 2.83496C9.85408 3.01688 10 3.33994 10 3.98047V8.51953C10 9.16055 9.85325 9.48269 9.64941 9.66309C9.43067 9.8565 9.02863 9.99495 8.27344 9.99023H4.23047C3.47309 9.99023 3.0699 9.85208 2.85059 9.6582C2.64707 9.47809 2.5 9.15645 2.5 8.50977V3.98047L2.50684 3.75391C2.53765 3.2609 2.67156 2.99409 2.85059 2.83496C3.07039 2.63967 3.4745 2.5 4.23047 2.5Z" stroke="#6D6C6B"/>
+                <path d="M4.23047 14H8.26953C9.01445 14 9.4085 14.1526 9.62793 14.3721C9.84736 14.5915 10 14.9855 10 15.7305V19.7695C10 20.5145 9.84736 20.9085 9.62793 21.1279C9.4085 21.3474 9.01445 21.5 8.26953 21.5H4.23047C3.48555 21.5 3.0915 21.3474 2.87207 21.1279C2.65264 20.9085 2.5 20.5145 2.5 19.7695V15.7305C2.5 14.9855 2.65264 14.5915 2.87207 14.3721C3.0915 14.1526 3.48555 14 4.23047 14Z" stroke="#6D6C6B"/>
+              </svg>
+              &nbsp;&nbsp; Homepage
+            </span>
+            <i className="bi bi-chevron-down small"></i>
+          </a>
+
+          <div className="submenu collapse" id="homeMenu" data-bs-parent="#sidebar">
+            <div className="submenu-inner">&nbsp;&nbsp;
+              <svg width="10" height="600" viewBox="0 0 10 722" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0.5" y1="0" x2="0.5" y2="722" stroke="#E6EAEE" />
+                {/* other lines */}
+              </svg>
+
+              <div className="submenu-links">
+                <a href="slider.html">Slider</a>
+                <a href="client logo.html">Client Logos</a>
+                <a href="About us section.hml.html">About Us </a>
+                <a href="Industries.html">Industries & Section</a>
+                <a href="partners.html">Partners</a>
+                <a href="Onboarding.html">Onboarding Process</a>
+                <a href="how its work.html">How it Works</a>
+                <a href="why choose us.html">Why Choose Us</a>
+                <a href="pricing plane.html">Pricing Plan</a>
+                <a href="call to action.html">Call to Action</a>
+                <a href="faqs.html">FAQs</a>
+                <a href="insights.html">Insights</a>
               </div>
             </div>
           </div>
+
+          {/* Repeat same pattern for other menus: About Page, Company Culture, Industries, Insights, etc. */}
+        </div>
+
+        {/* Logout */}
+        <div className="logout" style={{ marginTop: "50px" }}>
+          <svg style={{ marginLeft: "-90px" }} width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.89999 7.56C9.20999 3.96 11.06 2.49 15.11 2.49H15.24C19.71 2.49 21.5 4.28 21.5 8.75V15.27C21.5 19.74 19.71 21.53 15.24 21.53H15.11C11.09 21.53 9.23999 20.08 8.90999 16.54" stroke="#596780" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M15 12H3.62" stroke="#596780" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5.85 8.65L2.5 12L5.85 15.35" stroke="#292D32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span style={{ color: "rgba(89, 103, 128, 1)" }}>Log Out</span>
+        </div>
+      </div>
+    </div>
+       
         </div>
       </div>
     </div>

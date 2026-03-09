@@ -1,69 +1,62 @@
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const GetCompanyCatureHeadersData=()=>{
+const GetCompanyCultureHeadersData = () => {
+  const [companyCulture, setCompanyCulture] = useState([]);
 
-const [companycalture,setcompanycalture]=useState([]);
-useEffect(()=>{
+  useEffect(() => {
+    const fetchCompanyCulture = async () => {
+      try {
+        const res = await axios.get(
+          "http://83.147.38.201:8001/api/GetCompanyCalture"
+        );
+        setCompanyCulture(res.data);
+      } catch (error) {
+        console.log("Error while fetching company culture", error);
+      }
+    };
 
-    const GetCompanyCalture=async()=>{
+    fetchCompanyCulture();
+  }, []);
 
-        try{
+  const data = companyCulture[0] || {};
 
-    const GetCompanyCalturefromAPI= await axios.get("http://localhost:8001/api/GetCompanyCalture")
-    setcompanycalture(GetCompanyCalturefromAPI.data);
-        }
-        catch(error)
-        {
-       console.log("error while fetching");
-
-        }
-       }
-
-
-GetCompanyCalture(); 
-},[]);debugger
-  const data = companycalture[0] || {};
-  const dataDetail = data.Detail || [];
-return(<>
- <div style={{ overflowX: "hidden", paddingLeft: "60px", paddingRight: "40px" }}>
+  return (
+    <div style={{ overflowX: "hidden", paddingLeft: "30px", paddingRight: "30px" }}>
       <div className="row align-items-center homs g-6" style={{ "--bs-gutter-x": "2.5rem" }}>
+        {/* IMAGE COLUMN */}
         <div className="col-md-6 text-center mb-4 mb-md-0">
           <img
-             src={
-                  data?.Attachment
-                    ? `${process.env.PUBLIC_URL}/img/${data?.Attachment}`
-                    : `${process.env.PUBLIC_URL}/img/empowering.png`
-                }
-            alt="Image"
+            src={
+              data?.ImagePath
+                ? `http://83.147.38.201:8002/uploads/culture/${data.ImagePath}`
+                : `${process.env.PUBLIC_URL}/img/empowering.png`
+            }
+            alt="Company Culture"
             className="img-fluid rounded"
             style={{ display: "block", margin: "0 auto" }}
           />
         </div>
 
+        {/* TEXT COLUMN */}
         <div className="col-md-6">
-          <div className="section-subtitlee mb-4">{data?.Tag}</div>
-         <div className="row">
+          <div className="section-subtitlee mb-4">{data?.TagHeading}</div>
+<br/>
+          <div className="row">
             <div className="col-md-8">
-           <p className="smart">
-            {data?.Heading}
+              <p className="smart" style={{textAlign: 'left'}}>{data?.Heading}</p>
+            </div>
+          </div>
+
+
+          <p className="hgs CultureSet" style={{ width: "87%" }} >
+         
+             {data.Description
+                ? new DOMParser()
+                    .parseFromString(data.Description, "text/html")
+                    .body.textContent 
+                : ""}
           </p>
-            </div>
-            </div>
-
-        
-          <p className="hgs" style={{ width: "87%" }}>
-            
-           {data?.Description}  </p>
-
-
-          <ul className="list">
-             {dataDetail.map((item,index)=>(
-            <li key={index}><span>{item}</span></li> 
-            ))}
-          </ul>
-
-
         </div>
       </div>
 
@@ -72,9 +65,7 @@ return(<>
       <br />
       <br />
     </div>
+  );
+};
 
-
-</>)
-}
-
-export default GetCompanyCatureHeadersData;
+export default GetCompanyCultureHeadersData;

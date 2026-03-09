@@ -1,70 +1,77 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
-const GetPartnerAllData=()=>{
+const GetPartnerAllData = () => {
+  const refreshKey = useContext(RefreshContext);
+  const [partners, setPartners] = useState([]);
 
-const [partners,setpartners]=useState([]);
+  useEffect(() => {
+    const getPartners = async () => {
+      try {
+        const response = await axios.get(
+          "http://83.147.38.201:8001/api/GetPartners"
+        );
+        setPartners(response.data);
+      } catch (error) {
+        console.log("Error while fetching partners:", error);
+      }
+    };
 
-useEffect(()=>{
+    getPartners();
+  }, [refreshKey]);
 
-    const GetPartners=async()=>{
-try{
+  if (partners.length === 0) return null;
 
-    const GetPartnersAPI= await axios.get('http://localhost:8001/api/GetPartners');
-    setpartners(GetPartnersAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
-        }
-GetPartners();
-},[]);
+  const data = partners[0];
+  // ✅ REMOVE HTML TAGS HERE
+  const cleanDescription = data.Description
+    ? data.Description.replace(/<\/?[^>]+(>|$)/g, "")
+    : "";
+  return (
+    <div style={{ paddingRight: "5rem", paddingLeft: "6rem" }} className="partnertext">
 
-if(partners.length==0){
-    return null
-}
- const data=partners[0];
-return(
 
- <div className="my-5" style={{ padding :"0 60px"}}>
-  <div className="row align-items-center">
- <div className="col-md-6">
- <div className="section-subtitles">{data.P_Tag}</div>
- <br/>
-      <p className="best">{data.P_Heading}</p>
-      <p className="collaborate">
+      <div className="row align-items-center">
 
-    {data.P_Description.split(' ').map((word, index) => (
-    <React.Fragment key={index}>
-      {word}{' '}
-      {(index + 1) % 7 === 0 && <br />} 
-      {/* Inserts a <br/> after every 3 words */}
-    </React.Fragment>
-  ))}
+        {/* LEFT CONTENT */}
+        <div className="col-md-6">
+          <div className="section-subtitles">
+            {data.TagHeading}
+          </div>
 
-      </p>
-     </div>
+          <br />
 
-    <div className="col-md-6 mb-4 mb-md-0">
-      <img
-        src={
-        data.P_Image
-        ?`${process.env.PUBLIC_URL}/img/${data.P_Image}`
-       :`${process.env.PUBLIC_URL}/img/group.png}`
-        }
-       alt="Example Image"
-      className="img-fluid"
-	
-	/>
+          <p className="best">
+            {data.MainHeading}
+          </p>
+
+          <p className="collaborate">
+            {cleanDescription.split(" ").map((word, index) => (
+              <React.Fragment key={index}>
+                {word}{" "}
+                {(index + 1) % 7 === 0 && <br />}
+              </React.Fragment>
+            ))}
+          </p>
+        </div>
+
+        {/* RIGHT IMAGE */}
+        <div className="col-md-6 mb-4 mb-md-0">
+          <img
+            src={
+              data.ImagePath
+                ? `http://83.147.38.201:8002/uploads/partners/${data.ImagePath}`
+                : `${process.env.PUBLIC_URL}/img/group.png`
+            }
+            alt="Partners"
+            className="img-fluid"
+          />
+        </div>
+
+      </div>
     </div>
-  </div>
- </div>
-
-
-
-);
-
-}
+  );
+};
 
 export default GetPartnerAllData;

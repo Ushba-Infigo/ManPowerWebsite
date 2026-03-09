@@ -1,9 +1,9 @@
-import PartenersSchema from '../Models/PartnerModel.js'
+import partnersSchema  from '../Models/PartnerModel.js'
 
 export const GetPartnersData=async(req,res)=>{
 
     try{
-        const GetPartnersAll=await PartenersSchema.find();
+        const GetPartnersAll=await partnersSchema .find();
         if(!GetPartnersAll||GetPartnersAll.length==0){
             return res.status(404).json({message:"Data Not Found"})
         }

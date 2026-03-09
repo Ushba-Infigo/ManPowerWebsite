@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const Sliderschema = new mongoose.Schema({
+const sliderSchema = new mongoose.Schema({
   Tag: {
     type: String,
     required: true
@@ -16,9 +16,21 @@ const Sliderschema = new mongoose.Schema({
   ImagePath: {
     type: String,
     required: true
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
   }
-
 });
 
-//Force it to use the "Slider" collection exactly as in Compass
-export default mongoose.model("Slider", Sliderschema, "Slider");
+sliderSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
+
+// Model name: 'Slider', collection: 'sliders'
+export default mongoose.model('sliders', sliderSchema, 'sliders');

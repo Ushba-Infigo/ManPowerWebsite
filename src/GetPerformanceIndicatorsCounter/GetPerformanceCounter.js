@@ -11,7 +11,7 @@ useEffect(()=>{
     const Getperformancecounter=async()=>{
 try{
 
-    const GetPerformancecounterAPI= await axios.get('http://localhost:8001/api/GetPerformanceCounter');
+    const GetPerformancecounterAPI= await axios.get('http://83.147.38.201:8001/api/GetPerformanceCounter');
     setperformancecounter(GetPerformancecounterAPI.data);
    }
 catch(error)

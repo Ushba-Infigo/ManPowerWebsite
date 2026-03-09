@@ -1,28 +1,70 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const InsightsListSchema=new mongoose.Schema({
-
-_id:{type:String,required:true},
-
-Category:{type:String,required:true},
-Title:{type:String,required:true},
-Description:{type:String,required:true},
-AuthorName:{type:String,required:true},
-AuthorImage:{type:String,required:true},
-PublishDate:{type:String,required:true},
-CoverImage:{type:String,required:true},
-
+const insightsSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Insights'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  InsightCards: [{
+    IndustryHeading: {
+      type: String,
+      required: true
+    },
+    BlogHeading: {
+      type: String,
+      required: true
+    },
+    Description: {
+      type: String,
+      required: true
+    },
+     detailDescription: {
+      type: String,
+      default: ""
+    },
+    ImagePath: {
+      type: String,
+      required: false
+    },
+    UserName: {
+      type: String,
+      required: false
+    },
+    UserImagePath: {
+      type: String,
+      required: false
+    },
+    UploadDate: {
+      type: Date,
+      required: false
+    },
+    IsEnabled: {
+      type: Boolean,
+      default: true
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const InsightsSchema = new mongoose.Schema({
- 
-_id:{type:String,required:true},
-Insight_Tag:{type:String,required:true},
-Insight_Heading:{type:String,required:true},
-Insights_List:[InsightsListSchema],
-CreatedAt: { type: Date, default: Date.now },
-UpdatedAt: { type: Date, default: Date.now }
+insightsSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
-const Insights = mongoose.model('Insights', InsightsSchema, 'Insights');
 
-export{Insights};
+export default mongoose.model('Insights', insightsSchema);

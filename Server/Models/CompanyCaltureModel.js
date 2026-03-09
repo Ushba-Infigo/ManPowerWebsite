@@ -1,18 +1,40 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const CompanyCaltureSchema = new mongoose.Schema({
-
-_id: { type: String, required: true },
-Tag: { type: String, required: true },
-Heading: { type: String, required: true },
-Description: { type: String, required: true },
-Description_Details: { type: [String], default: [] },
-Images: { type: [String], default: [] },
-  CreatedAt: { type: Date, default: Date.now },
-  UpdatedAt: { type: Date, default: Date.now }
-
-
+const cultureSchema = new mongoose.Schema({
+  CompanyCultureTitle: {
+    type: String,
+    required: true
+  },
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Our Culture'
+  },
+  Heading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  ImagePath: {
+    type: String,
+    required: false
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const CompanyCaltures=mongoose.model("CompanyCalture",CompanyCaltureSchema,"CompanyCalture");
-export{CompanyCaltures};
+cultureSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
+
+export default mongoose.model('Culture', cultureSchema);

@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+Server running on port \\.\pipe\f801355b-52cd-49a2-8c53-eba43ffea29a
+DB Connected Successfully

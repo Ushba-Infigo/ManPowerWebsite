@@ -1,34 +1,47 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const CompanyInfoschema = new mongoose.Schema({
-     _id: {
+const getInTouchSchema = new mongoose.Schema({
+  Title: {
     type: String,
     required: true
   },
-  Address: {
+  Heading: {
     type: String,
     required: true
+  },
+  Location: {
+    type: String,
+    required: true
+  },
+  Phone: {
+    type: String,
+    required: true
+  }, 
+   Country: {
+    type: String,
+    required: false
   },
   Email: {
     type: String,
     required: true
-  }
-  ,
-  Email: {
+  },
+  AttachmentPath: {
     type: String,
-    required: true
-  }
-  ,
+    required: false
+  },
   CreatedAt: {
-    type: Object,
-    required: true
+    type: Date,
+    default: Date.now
   },
   UpdatedAt: {
-    type: Object,
-    required: true
+    type: Date,
+    default: Date.now
   }
-
 });
 
-//Force it to use the "Slider" collection exactly as in Compass
-export default mongoose.model("CompanyContactInfo",CompanyInfoschema, "CompanyContactInfo");
+getInTouchSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
+
+export default mongoose.model('GetInTouch', getInTouchSchema);

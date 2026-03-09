@@ -1,21 +1,48 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-
-
-
-
-const ContactUsDetailSchema = new mongoose.Schema({
- _id:{type:String,required:true},
-  Tag: { type: String, required: true },
-  Heading: { type: String, required: true },
-  Description: { type: String, required: true },
-  ContactNo: { type: String, required: true },
-  Benefits: { type: [String], default: [] },
-  HappenNext: { type: [String], default: [] },
-  CreatedAt: { type: Date, default: Date.now },
-  UpdatedAt: { type: Date, default: Date.now }
+const contactFormSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Contact Us'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+    Country: {
+    type: String,
+    required: false
+  },
+  CallUs: {
+    type: String,
+    required: true
+  },
+  BenefitDescription: {
+    type: String,
+    required: true
+  },
+  WhatHappensNext: {
+    type: String,
+    required: true
+  },
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
+contactFormSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
 
-const ContactUs=mongoose.model("ContactUsDetail",ContactUsDetailSchema,"ContactUsDetail");
-export{ContactUs};
+export default mongoose.model('ContactForm', contactFormSchema);

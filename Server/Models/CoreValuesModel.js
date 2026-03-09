@@ -1,31 +1,46 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const CoreValuesHeaderSchema=new mongoose.Schema({
-
-
-_id:{type:String,required:true},
-Tag:{type:String,required:true},
-Heading:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-
-
+const coreValuesSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Our Core Values'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Cards: [{
+    CardHeading: {
+      type: String,
+      required: true
+    },
+    Description: {
+      type: String,
+      required: true
+    },
+    IconPath: {
+      type: String,
+      required: false
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const  CoreValuesSchema=new mongoose.Schema({
-
-
-
-_id:{type:String,required:true},
-Tab_Heading:{type:String,required:true},
-Tab_Attachment:{type:String,required:true},
-Tab_Description:{type:String,required:true},
-Tab_Icon:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-    
+coreValuesSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
 
-const CoreHeaders=mongoose.model("CoreValues",CoreValuesHeaderSchema,"CoreValues");
-const CoreD=mongoose.model("CoreValuesDetails",CoreValuesSchema,"CoreValuesDetails");
-export{CoreHeaders,CoreD};
+export default mongoose.model('CoreValues', coreValuesSchema);

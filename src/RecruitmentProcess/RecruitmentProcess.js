@@ -1,108 +1,121 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
-const GetRecruitmentProcessAllData=()=>{
+const GetRecruitmentProcessAllData = () => {
+  const refreshKey = useContext(RefreshContext);
+  const [onboarding, setOnboarding] = useState([]);
 
-const [Recruitment,setRecruitment]=useState([]);
-const [RecruitmentReq,setRecruitmentReq]=useState([]);
+  useEffect(() => {
+    const getOnboarding = async () => {
+      try {
+        const response = await axios.get(
+          "http://83.147.38.201:8001/api/GetRecruitmentProcess"
+        );
+        setOnboarding(response.data);
+      } catch (error) {
+        console.log("Error while fetching onboarding data", error);
+      }
+    };
 
-useEffect(()=>{
+    getOnboarding();
+  }, [refreshKey]);
 
-    const GetRecruitments=async()=>{
-try{
-    const GetRecruitmentAPI= await axios.get('http://localhost:8001/api/GetRecruitmentProcess');
-    setRecruitment(GetRecruitmentAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
- }
-const GetRecruitmentsRequirements=async()=>{
-  try{
-    const GetRecruitmentReqAPI=await axios.get('http://localhost:8001/api/GetRecruitmentRequirements');
-    setRecruitmentReq(GetRecruitmentReqAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
- }
- 
-GetRecruitments();
-GetRecruitmentsRequirements();
-},[]);
+  if (onboarding.length === 0) return null;
 
-if(Recruitment.length==0){
-    return null
-}
-if(RecruitmentReq.length==0){
-    return null
-}
- const data=Recruitment[0];
- return (
+  const data = onboarding[0];
+  const cards = data.Cards || [];
+
+  return (
     <div>
-      <br /> <br /> <br />
+      <br /><br /><br />
+
+      {/* TAG HEADING */}
       <center>
-        <div className="section-subtitle">{data.R_Tag}</div>
-      </center>
-      <br />
-      <center>
-        <p className="expert">{data.R_Heading}</p>
+        <div className="section-subtitle">
+          {data.TagHeading}
+        </div>
       </center>
 
-      <div className="px-5">
+      <br />
+
+      {/* MAIN HEADING */}
+      <center>
+        <p className="expert py-5">
+          {data.MainHeading}
+        </p>
+      </center>
+
+      {/* CARDS */}
+      <div className="px-3">
         <div className="services-box">
           <div className="row">
-            {RecruitmentReq.map((processreq, index) => (
-              <div className="col-lg-2 col-md-4 col-sm-6" key={index}>
-                <div className="service-item divider">
-                  {/* Circle Icon */}
-                  <div
-                    style={{
-                      width: "65px",
-                      height: "65px",
-                      background: "rgba(50, 72, 184, 1)",
-                      transition: "0.3s",
-                      borderRadius: "50%",
-                      marginBottom: "15px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    onMouseOver={(e) =>
+            {cards
+              .sort((a, b) => a.Order - b.Order)
+              .map((card) => (
+                <div
+                  className="col-lg-2 col-md-4 col-sm-6 service-wrapper"
+                  key={card._id}
+                >
+                  <div className="service-item divider" style={{ width: "100%" }}>
+
+                    {/* ICON */}
+                    <div
+                      style={{
+                        width: "65px",
+                        height: "65px",
+                        background: "rgba(50, 72, 184, 1)",
+                        transition: "0.3s",
+                        borderRadius: "50%",
+                        marginBottom: "15px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onMouseOver={(e) =>
                       (e.currentTarget.style.background =
                         "rgba(82, 183, 232, 0.4)")
-                    }
-                    onMouseOut={(e) =>
+                      }
+                      onMouseOut={(e) =>
                       (e.currentTarget.style.background =
                         "rgba(50, 72, 184, 1)")
-                    }
-                  >
-                        <img
-              src={
-                processreq.RR_Image
-                  ? `${process.env.PUBLIC_URL}/img/${processreq.RR_Image}`
-                  : `${process.env.PUBLIC_URL}/img/logo1.png`
-              }
-              alt="Client Logo"
-            />
-                  </div>
+                      }
+                    >
+                      <img
+                        src={
+                          card.IconPath
+                            ? `http://83.147.38.201:8002/uploads/onboarding/${card.IconPath}`
+                            : `${process.env.PUBLIC_URL}/img/logo1.png`
+                        }
+                        alt={card.CardHeading}
+                        style={{ width: "32px", height: "32px" }}
+                      />
+                    </div>
 
-                  {/* Dynamic Content */}
-                  <div className="service-title">{processreq.RR_Heading}</div>
-                  <div className="service-desc">
-                    {processreq.RR_Description ||
-                      "CV screening matches applicant's skills, qualifications, and professional capabilities against my job's requirements."}
+                    {/* CONTENT */}
+                    <div className="service-title">
+                      {card.CardHeading}
+                    </div>
+
+                    <div
+                      className="service-desc"
+                    >
+                      {card.Description
+                ? new DOMParser()
+                    .parseFromString(card.Description, "text/html")
+                    .body.textContent 
+                : ""}
+                    </div>
+ 
+
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
-      </div>
+      </div><br /><br />
     </div>
   );
-
-}
+};
 
 export default GetRecruitmentProcessAllData;

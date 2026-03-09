@@ -1,5 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect, createContext } from 'react';
+import { io } from 'socket.io-client';
 import './App.css';
+import DefaultLayout from './DefaultLayout';
+import SidebarLayout from './SidebarLayout';
 import GetSlider from './GetSliders/GetSlider';
 import TopBar from './TopBar/TopBar';
 import GetClient from './GetClients/GetClient';
@@ -10,7 +14,7 @@ import GetPerformanceCounter from './GetPerformanceIndicatorsCounter/GetPerforma
 import RecruitmentProcess from './RecruitmentProcess/RecruitmentProcess';
 import GetWorkProcessData from './WorkProcess/GetWorkProcess';
 import GetChooseUsData from './ChooseUs/GetChooseUs';
-import { GetPricingPlanData } from './PricingPlan/GetPricingPlan';
+import GetPricingPlanData from './PricingPlan/GetPricingPlan';
 import GetConsultationBannerData from './ConsultationBanner/GetConsultationBanner';
 import GetReviewAllData from './Reviews/GetReviews';
 import GetFAQsData from './FAQs/GetFAQs';
@@ -34,120 +38,161 @@ import BottomToTop from './TopBar/BottomToTop';
 import Banner from './TopBar/Banner';
 import GetArticalInsightsData from './Insights/GetArticalInsights';
 import Sidebar from './CMS/Sidebar';
+import GetIndustryData from "./IndustriesServices/Industriesdetail";
+import ConsultationList from "./ContactUs/GetConsultation";
+import { CountryProvider } from './CountryContext';
+
+export const RefreshContext = createContext(0);
 
 function App() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const socket = io("http://83.147.38.201:8001");
+    socket.on("contentUpdated", () => {
+      console.log("Database updated! Triggering re-render for all components...");
+      setRefreshKey(prev => prev + 1);
+    });
+    return () => socket.disconnect();
+  }, []);
+
   return (
-    <div className="App">
-      <TopBar />
+     <CountryProvider>
+    <RefreshContext.Provider value={refreshKey}>
+      <div className="App">
+        {/* <TopBar /> */}
 
-      <Routes>
- {/* Sidebar-only page */}
-      {/* <Route path="/Sidebar" element={<Sidebar/>} /> */}
+        <Routes>
+          {/* Sidebar-only page */}
+          <Route path="/Sidebar" element={
+            <SidebarLayout>
+              <Sidebar />
+            </SidebarLayout>
 
-        {/* Home page */}
-        <Route path="/" element={
-          <>
-            <GetSlider />
-            <GetClient />
-            <GetAboutUs />
-            <IndustriesServicesHeaders />
-            <GetPartner />
-            <GetPerformanceCounter />
-            <RecruitmentProcess />
-            <GetWorkProcessData />
-            <GetChooseUsData />
-            <GetPricingPlanData />
-            <GetConsultationBannerData />
-            <GetReviewAllData />
-            <GetFAQsData />
-            <GetInsightsData />
-          </>
-        } />
-        {/* About Us Detail page */}
-        <Route path="/AboutUsDetail" element={
-          <>
-          <GetAboutUsDetailData/>
-          <GetContactUsDetailData/>
-          </> 
-          
           } />
-        <Route path="/GetPricingDetail" element={
-          <>
-          <GetPricingDetails />
-          <GetPricingPlanData />
-          <GetReviewAllData />
-          <GetFAQsData />
-          <GetConsultationBannerData />
-          </>
+
+          {/* Home page */}
+          <Route path="/" element={
+            <DefaultLayout>
+              <>
+                <GetSlider />
+                <GetClient />
+                <GetAboutUs />
+                <IndustriesServicesHeaders />
+                <GetPartner />
+                <GetPerformanceCounter />
+                <RecruitmentProcess />
+                <GetWorkProcessData />
+                <GetChooseUsData />
+                <GetPricingPlanData />
+                <GetConsultationBannerData />
+                <GetReviewAllData />
+                <GetFAQsData />
+                <GetInsightsData />
+              </></DefaultLayout>
           } />
-        <Route path="/GetInsightsDetails" element={
-          <GetInsightsDetailsData />
+          {/* About Us Detail page */}
+          <Route path="/AboutUsDetail" element={
+            <DefaultLayout>
+              <>
+                <GetAboutUsDetailData />
+                <GetContactUsDetailData />
+              </> </DefaultLayout>
+
           } />
-        <Route path="/GetCompanyCalture" element={
-          <>
-            <GetCaltureTop />
-           <GetCompanyCatureHeadersData/>
-            <GetCalture />
-            <GetWorkEnvironmentData/>
-            <GetCompanyCaltureDetailData/>
-          </>
-        
+          <Route path="/GetPricingDetail" element={
+            <DefaultLayout>
+              <>
+                <GetPricingDetails />
+                <GetPricingPlanData />
+                <GetReviewAllData />
+                <GetFAQsData />
+                <GetConsultationBannerData />
+              </></DefaultLayout>
+          } />
+          <Route path="/GetInsightsDetails" element={
+            <DefaultLayout>
+              <GetInsightsDetailsData /></DefaultLayout>
+          } />
+          <Route path="/GetCompanyCalture" element={
+            <DefaultLayout>
+              <GetCaltureTop />
+              <GetCompanyCatureHeadersData />
+              <GetCalture />
+              <GetWorkEnvironmentData />
+              <GetCompanyCaltureDetailData />
+            </DefaultLayout>
+
           } />
           <Route path="/GetContactUs" element={
-            <>
-             <GetContactUsData />
-          <GetContactUsDetailData />
-            </>
-         
+            <DefaultLayout>
+              <GetContactUsData />
+              <GetContactUsDetailData />
+            </DefaultLayout>
+
           } />
-        <Route path="/IT" element={
-            <>
+          <Route path="/GetConsultation" element={
+            <DefaultLayout>
+              <ConsultationList />
+            </DefaultLayout>
+
+          } />
+          <Route path="/GetIndustrydetailByName/:industryName" element={
+            <DefaultLayout>
+              {/* <Banner /> */}
+              <GetIndustryData />
+            </DefaultLayout>
+          } />
+          {/* <Route path="/IT" element={
+          <DefaultLayout>
              <GetITData />
-            </>
+            </DefaultLayout>
          
           }
           />
             <Route path="/Education" element={
-            <>
+            <DefaultLayout>
             <GetEducationData/>          
-            </>
+            </DefaultLayout>
           }
           />  
             <Route path="/Tele" element={
-            <>
+            <DefaultLayout>
             <GetTeleData />      
-            </>
+            </DefaultLayout>
          
           }/>
             <Route path="/HealthCare" element={
-            <>
+            <DefaultLayout>
             <GetHealthCareData />      
-            </>
-          }/> 
-            <Route path="/GetFAQs" element={
-            <>
-            <Banner/>
-            <GetFAQsData />      
-            </>
-         
-          }/>
-            <Route path="/IndustriesServicesHeaders" element={
-            <>
-            <Banner/>
-            <IndustriesServicesHeaders />      
-            </>
-          }/>
-           <Route path="/GetArticalInsights/:id" element={
-            <>
-            <Banner/>
-            <GetArticalInsightsData />      
-            </>
-          }/>
-        {/* Add more routes here as needed */}
-      </Routes>
-      <BottomToTop />
-      <GetCompanyInfoAllData />
-    </div>
+            </DefaultLayout>
+          }/>  */}
+          <Route path="/GetFAQs" element={
+            <DefaultLayout>
+              <Banner />
+              <GetFAQsData />
+            </DefaultLayout>
+
+          } />
+          <Route path="/IndustriesServicesHeaders" element={
+            <DefaultLayout>
+              <Banner />
+              <IndustriesServicesHeaders />
+            </DefaultLayout>
+          } />
+          <Route path="/GetArticalInsights/:index/:userId" element={
+            <DefaultLayout>
+              <Banner />
+              <GetArticalInsightsData />
+            </DefaultLayout>
+          } />
+          {/* Add more routes here as needed */}
+        </Routes>
+        {/* <BottomToTop />
+      <GetCompanyInfoAllData /> */}
+      </div>
+    </RefreshContext.Provider>
+</CountryProvider>
   );
 }
 

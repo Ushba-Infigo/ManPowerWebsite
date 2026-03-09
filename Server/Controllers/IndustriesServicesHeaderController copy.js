@@ -1,10 +1,10 @@
-import {IndustriesandServicesmodel,Industry_TabsModel} from '../Models/IndustriesHeadersModel.js'
+import {IndustriesModel} from '../Models/IndustriesHeadersModel.js'
 
 
 
   export const GetIndustriesandServices=async(req,res)=>{
     try{
- const GetIndustryHeaders= await IndustriesandServicesmodel.find();
+ const GetIndustryHeaders= await IndustriesModel.find();
  if(!GetIndustryHeaders || GetIndustryHeaders.lenght==0)
     {
     return res.status(404).json({message:"Data Not Found"});

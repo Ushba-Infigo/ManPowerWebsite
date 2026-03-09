@@ -1,158 +1,169 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+
+
+import { io } from "socket.io-client";
 
 const GetInsightsData = () => {
-  const [Insights, setGetInsights] = useState([]);
+  const [insights, setInsights] = useState([]);
+  const [expandedCards, setExpandedCards] = useState({});
 
-  // Always define hooks first
-  useEffect(() => { 
-    const GetInsightsAll = async () => {
-      try {
-        const GetResponse = await axios.get("http://localhost:8001/api/GetInsights");
-        setGetInsights(GetResponse.data);
-      } catch (error) {
-        console.log("Error while fetching FAQs", error);
-      }
+  const fetchInsights = async () => {
+    try {
+      const res = await axios.get("http://83.147.38.201:8001/api/GetInsights");
+      const data = res.data;
+
+      // Collect unique UserIds from all InsightCards
+      const allCards = data.flatMap(d => d.InsightCards || []);
+      const uniqueUserIds = [...new Set(allCards.map(c => c.UserId).filter(Boolean))];
+
+      // Fetch user data for each unique UserId
+      const userMap = {};
+      await Promise.all(
+        uniqueUserIds.map(async (uid) => {
+          try {
+            const userRes = await axios.get(`http://83.147.38.201:8001/api/GetUser/${uid}`);
+            userMap[uid] = userRes.data;
+          } catch (err) {
+            console.log(`Error fetching user ${uid}:`, err);
+          }
+        })
+      );
+
+      // Merge user data into each InsightCard
+      const enrichedData = data.map(insight => ({
+        ...insight,
+        InsightCards: (insight.InsightCards || []).map(card => ({
+          ...card,
+          UserData: userMap[card.UserId] || null
+        }))
+      }));
+
+      setInsights(enrichedData);
+    } catch (error) {
+      console.error("Error fetching insights", error);
+    }
+  };
+
+  useEffect(() => {
+    // Initial fetch
+    fetchInsights();
+
+    // Listen for real-time updates from CMS changing DB
+    const socket = io("http://83.147.38.201:8001");
+
+    socket.on("insightsUpdated", () => {
+      console.log("Real-time update received! Refreshing insights...");
+      fetchInsights();
+    });
+
+    return () => {
+      socket.disconnect();
     };
-    GetInsightsAll();
   }, []);
 
-useEffect(() => {
-  const backToTop = document.getElementById('backToTop');
-  if (!backToTop) return;
+  if (!insights || insights.length === 0) return null;
 
-  const handleScroll = () => {
-    if (window.scrollY > 200) backToTop.style.display = 'block';
-    else backToTop.style.display = 'none';
-  };
+  const data = insights[0]; 
+  const insightCards = (data?.InsightCards || [])
+    .slice()
+    .sort((a, b) => new Date(b.UploadDate) - new Date(a.UploadDate))
+    .slice(0, 3);
 
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  window.addEventListener('scroll', handleScroll);
-  backToTop.addEventListener('click', handleClick);
-
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    backToTop.removeEventListener('click', handleClick);
-  };
-}, []);
-
-    if (!Insights || Insights.length === 0) return null;
-  const data = Insights[0];
-  const InsightsList = data?.Insights_List || [];
- 
-
-  return(
-  
-  <>
-  
-    <div>
+  return (
+    <>
       <center>
-        <div className="section-subtitleei">{data.Insight_Tag}</div>
-      </center>
-      <br />
-
-      <center>
-        <p className="latest text-center">{data.Insight_Heading}</p>
+        <div className="section-subtitleei">{data.TagHeading}</div>
+        <br />
+        <p className="latest text-center">{data.MainHeading}</p>
       </center>
 
-      <div style={{ padding: "4rem", marginTop: "-30px" }}>
+      <div style={{ padding: "1rem" }}>
         <div className="row g-4">
-            {InsightsList.slice(0, 3).map((insight, index) => (
-           <div className="col-12 col-md-4" style={{ paddingBottom: "6px" }} key={index}>
-            <div className="card w-60">
-              <img
-                //src="./img/card1.png"
-                       src={
-                        insight.CoverImage
-                        ?`${process.env.PUBLIC_URL}/img/${insight.CoverImage}`
-                        :`${process.env.PUBLIC_URL}/img/card1.png}`
-                     }
-                className="card-img-top p-3"
-                alt="Design"
-              />
-              <div className="card-body" style={{ marginTop: "-30px" }}>
-                <h5 className="card-title">{insight.Category}</h5>
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}
-                >
-                  <p className="Ux" style={{ margin: 0 }}>
-                    {insight.Title}
+          {insightCards.map((insight, index) => (
+            <div className="col-12 col-md-4" key={index}>
+              <div className="card">
+
+                <img
+                  src={
+                    insight.ImagePath
+                      ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                      : `${process.env.PUBLIC_URL}/img/card1.png`
+                  }
+                  className="card-img-top p-3"
+                  alt="Insight" style={{ height: "300px" }}
+                />
+
+                <div className="card-body">
+                  <h6 className="card-title">{insight.IndustryHeading}</h6>
+
+                  <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <h5 className="Ux" style={{textAlign:"left"}}>{insight.BlogHeading}</h5>
+                    <svg style={{ marginLeft: " 35px;" }} width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 17.4395L17 7.43945M17 7.43945H7M17 7.43945V17.4395" stroke="#051441" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg></span>
+                  <p
+                    className="card-text"
+                    style={{
+                      marginBottom: 0,
+                      ...(!expandedCards[index] && {
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }),
+                    }}>
+                      {insight?.Description
+                        ? new DOMParser()
+                            .parseFromString(insight?.Description, "text/html")
+                            .body.textContent
+                        : ""}
                   </p>
-                  <svg
-                    style={{ marginLeft: "35px" }}
-                    width="24"
-                    height="25"
-                    viewBox="0 0 24 25"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <span
+                    onClick={() => setExpandedCards(prev => ({ ...prev, [index]: !prev[index] }))}
+                    style={{ color: "#007bff", cursor: "pointer", fontSize: "13px", fontWeight: "500" }}
                   >
-                    <path
-                      d="M7 17.4395L17 7.43945M17 7.43945H7M17 7.43945V17.4395"
-                      stroke="#051441"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                    {expandedCards[index] ? "Show Less" : "... Read More"}
+                  </span>
+
+                  <div className="d-flex align-items-center gap-2 mt-3">
+                    <img
+                      src={
+                        insight.UserData?.ProfilePic
+                          ? `http://83.147.38.201:8002${insight.UserData.ProfilePic}`
+                          : `${process.env.PUBLIC_URL}/img/inner.png`
+                      }
+                      alt="Author"
+                      width="40"
+                      height="40"
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
                     />
-                  </svg>
-                </span>
 
-                <p className="card-text" style={{ marginTop: "10px" }}>
-                     {insight.Description}
-                  {/* How do you create compelling presentations that wow your
-                  colleagues and impress your managers? */}
-                </p>
-                <br />
+                    <div>
+                      <p className="mb-0" style={{ fontSize: '12px' }}>{insight.UserData?.username || insight.UserName}</p>
+                      <small style={{ fontSize: '12px' }}>
+                        {insight.UploadDate
+                          ? new Date(insight.UploadDate).toLocaleDateString()
+                          : ""}
+                      </small>
+                    </div>
+                  </div>
 
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <img
-                     src={
-                        insight.AuthorImage
-                        ?`${process.env.PUBLIC_URL}/img/${insight.AuthorImage}`
-                        :`${process.env.PUBLIC_URL}/img/inner.png}`
-                     }
-                    alt="Author"
-                    style={{ width: "41px", height: "41px" }}
-                  />
-                  <p className="aliya" style={{ marginTop: "-4px" }}>
-                    {insight.AuthorName}
-                  </p>
-                </span>
-                <p
-                  className="aug"
-                  style={{ marginTop: "-26px", marginLeft: "54px" }}
-                >
-                   {insight.PublishDate}
-                </p>
+                </div>
               </div>
             </div>
-          </div>
-
-            ))}
-       
+          ))}
         </div>
       </div>
-    </div>
+      <center>
+        <Link to="/GetInsightsDetails">
+          <button className="see">See All Insights</button>
+        </Link>
+      </center>
+    </>
+  );
+};
 
-    <center>
-  <button class="see">
-    See All Insights
-  </button>
-</center>
-  <button id="backToTop">  <i class="bi bi-arrow-up"></i>
-</button>
-  </>)
-}
 export default GetInsightsData;

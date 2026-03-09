@@ -1,4 +1,4 @@
-import {MissionDetail} from '../Models/AboutMissionModel.js'
+import MissionDetail from '../Models/AboutMissionModel.js'
 
 //GetAboutUs
 

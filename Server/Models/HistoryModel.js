@@ -1,28 +1,50 @@
 import mongoose from 'mongoose';
 
-const HistoryHeaderSchema = new mongoose.Schema({
-  _id: { type: String, required: true },
-  Tag: { type: String, required: true },
-  Heading: { type: String, required: true },
-  Description: { type: String, required: true },
-  CreatedAt: { type: String, required: true },
-  UpdatedAt: { type: String, required: true },
+const historySchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Our History'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  Sections: [{
+    SectionHeading: {
+      type: String,
+      required: true
+    },
+    SectionDescription: {
+      type: String,
+      required: true
+    },
+    ImagePath: {
+      type: String,
+      required: false
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const HistorySchema = new mongoose.Schema({
-  _id: { type: String, required: true },
-  H_Heading: { type: String, required: true },
-  H_Attachment: { type: String, required: true },
-  H_Description: { type: String, required: true },
-  CreatedAt: { type: String, required: true },
-  UpdatedAt: { type: String, required: true },
+historySchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
 
-// Check if models already exist
-const HistoryHeaders =
-  mongoose.models.History || mongoose.model('History', HistoryHeaderSchema, 'History');
-
-const HistoryD =
-  mongoose.models.HistoryDetail || mongoose.model('HistoryDetails', HistorySchema, 'HistoryDetails');
-
-export { HistoryHeaders, HistoryD };
+export default mongoose.model('History', historySchema);

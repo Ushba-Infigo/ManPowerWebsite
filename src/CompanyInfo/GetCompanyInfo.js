@@ -1,38 +1,40 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";		
+import { RefreshContext } from "../App";
+import CountryContext from "../CountryContext";
 import axios from "axios";
 import { Link } from 'react-router-dom';
-const GetCompanyInfoAllData=()=>{
+const GetCompanyInfoAllData = () => {
+  const refreshKey = useContext(RefreshContext); 
+   const { selectedCountry } = useContext(CountryContext);
+  const [CompanyInfo, setCompanyInfo] = useState([]);
 
-const [CompanyInfo,setCompanyInfo]=useState([]);
+  useEffect(() => {
 
-useEffect(()=>{
+    const GetCompanyInfo = async () => {
+      try {
 
-    const GetCompanyInfo=async()=>{
-try{
+        const GetCompanyInfoAPI = await axios.get(`http://83.147.38.201:8001/api/GetCompanyInfo?country=${selectedCountry}`);
+        setCompanyInfo(GetCompanyInfoAPI.data);
+      }
+      catch (error) {
+        console.log("error while fetching")
+      }
+    }
+    GetCompanyInfo();
+  }, [refreshKey,selectedCountry]);
 
-    const GetCompanyInfoAPI= await axios.get('http://localhost:8001/api/GetCompanyInfo');
-    setCompanyInfo(GetCompanyInfoAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
-        }
-GetCompanyInfo();
-},[]);
-
-if(CompanyInfo.length==0){
+  if (CompanyInfo.length == 0) {
     return null
-}
- const data=CompanyInfo[0];
-return(<>
+  }
+  const data = CompanyInfo[0];
+  return (<>
 
-<footer className="footer">
+    <footer className="footer footerset">
       <div className="pt-5 pb-3 px-5">
         <div className="row gy-4">
           {/* Logo & About */}
-          <div className="col-lg-4 col-md-6" style={{ marginTop: 0 }}>
-            <img src="./img/footer.png" alt="Logo" className="mb-3" />
+          <div className="footer-screen col-lg-4 col-md-6 " style={{ marginTop: 0 }}>
+            <img src="/img/footer.png" alt="Logo" className="mb-3" />
             <p>
               With extensive outsourcing experience,<br />
               we combine technological expertise<br />
@@ -79,90 +81,90 @@ return(<>
           </div>
 
           {/* Discover */}
-          <div className="col-lg-2 col-md-6 dua">
+          <div className="footer-screen col-lg-2 col-md-6 dua">
             <h6>Discover Manpower</h6>
             <ul>
-              <li><Link  to="/">Home</Link></li>
-              <li><Link  to="/AboutUsDetail">About Us </Link></li>
-              <li><Link  to="/GetContactUs">Contact Us</Link></li>
-              <li><Link  to="/GetCompanyCalture">Company Culture</Link></li>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/AboutUsDetail">About Us </Link></li>
+              <li><Link to="/GetContactUs">Contact Us</Link></li>
+              <li><Link to="/GetCompanyCalture">Company Culture</Link></li>
               <li><Link to="/GetInsightsDetails">Insights</Link></li>
             </ul>
           </div>
 
           {/* Quick Links */}
-          <div className="col-lg-2 col-md-6 dua" style={{ paddingLeft: "58px" }}>
+          <div className="footer-screen col-lg-2 col-md-6 dua" style={{ paddingLeft: "58px" }}>
             <h6>Quick Links</h6>
             <ul>
-              <li><Link  to="/IndustriesServicesHeaders">Industries</Link></li>
+              <li><Link to="/IndustriesServicesHeaders">Industries</Link></li>
               <li><a href="#">Privacy Policy</a></li>
-              <li><Link  to="/AboutUsDetail">About Us </Link></li>
-              <li><Link  to="/GetPricingDetail">Pricing</Link></li>
+              <li><Link to="/AboutUsDetail">About Us </Link></li>
+              <li><Link to="/GetPricingDetail">Pricing</Link></li>
               <li><Link to="/GetFAQs">FAQs</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
-          <div className="col-lg-4 col-md-6 dua" style={{ paddingLeft: "86px" }}>
-  
+          <div className="footer-screen col-lg-4 col-md-6 dua" style={{ paddingLeft: "86px" }}>
 
-    <h6>Stay Tuned With Us</h6>
-    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M12.8944 13.9304C14.6175 13.9304 16.0144 12.5336 16.0144 10.8104C16.0144 9.0873 14.6175 7.69043 12.8944 7.69043C11.1713 7.69043 9.77441 9.0873 9.77441 10.8104C9.77441 12.5336 11.1713 13.9304 12.8944 13.9304Z"
-        stroke="#D7D7D7"
-        strokeWidth="2"
-      />
-      <path
-        d="M4.51424 8.99C6.48424 0.330002 19.3142 0.340003 21.2742 9C22.4242 14.08 19.2642 18.38 16.4942 21.04C14.4842 22.98 11.3042 22.98 9.28424 21.04C6.52424 18.38 3.36424 14.07 4.51424 8.99Z"
-        stroke="#D7D7D7"
-        strokeWidth="2"
-      />
-    </svg><p style={{ marginLeft: "30px", marginTop: "-25px" }}>
 
-     {data.Address}
-    </p>
+            <h6>Stay Tuned With Us</h6>
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12.8944 13.9304C14.6175 13.9304 16.0144 12.5336 16.0144 10.8104C16.0144 9.0873 14.6175 7.69043 12.8944 7.69043C11.1713 7.69043 9.77441 9.0873 9.77441 10.8104C9.77441 12.5336 11.1713 13.9304 12.8944 13.9304Z"
+                stroke="#D7D7D7"
+                strokeWidth="2"
+              />
+              <path
+                d="M4.51424 8.99C6.48424 0.330002 19.3142 0.340003 21.2742 9C22.4242 14.08 19.2642 18.38 16.4942 21.04C14.4842 22.98 11.3042 22.98 9.28424 21.04C6.52424 18.38 3.36424 14.07 4.51424 8.99Z"
+                stroke="#D7D7D7"
+                strokeWidth="2"
+              />
+            </svg><p style={{ marginLeft: "30px", marginTop: "-25px" }}>
 
-  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M18.1445 21H8.14453C5.14453 21 3.14453 19.5 3.14453 16V9C3.14453 5.5 5.14453 4 8.14453 4H18.1445C21.1445 4 23.1445 5.5 23.1445 9V16C23.1445 19.5 21.1445 21 18.1445 21Z"
-        stroke="#D7D7D7"
-        strokeWidth="2"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18.1445 9.5L15.0145 12C13.9845 12.82 12.2945 12.82 11.2645 12L8.14453 9.5"
-        stroke="#D7D7D7"
-        strokeWidth="2"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-    <p style={{ margin: 0 }}> {data.Email}</p>
-  </div>
+              {data.Location}
+            </p>
 
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M22.8645 18.83C22.8645 19.19 22.7845 19.56 22.6145 19.92C22.4445 20.28 22.2245 20.62 21.9345 20.94C21.4445 21.48 20.9045 21.87 20.2945 22.12C19.6945 22.37 19.0445 22.5 18.3445 22.5C17.3245 22.5 16.2345 22.26 15.0845 21.77C13.9345 21.28 12.7845 20.62 11.6445 19.79C10.4945 18.95 9.40453 18.02 8.36453 16.99C7.33453 15.95 6.40453 14.86 5.57453 13.72C4.75453 12.58 4.09453 11.44 3.61453 10.31C3.13453 9.17 2.89453 8.08 2.89453 7.04C2.89453 6.36 3.01453 5.71 3.25453 5.11C3.49453 4.5 3.87453 3.94 4.40453 3.44C5.04453 2.81 5.74453 2.5 6.48453 2.5C6.76453 2.5 7.04453 2.56 7.29453 2.68C7.55453 2.8 7.78453 2.98 7.96453 3.24L10.2845 6.51C10.4645 6.76 10.5945 6.99 10.6845 7.21C10.7745 7.42 10.8245 7.63 10.8245 7.82C10.8245 8.06 10.7545 8.3 10.6145 8.53C10.4845 8.76 10.2945 9 10.0545 9.24L9.29453 10.03C9.18453 10.14 9.13453 10.27 9.13453 10.43C9.13453 10.51 9.14453 10.58 9.16453 10.66C9.19453 10.74 9.22453 10.8 9.24453 10.86C9.42453 11.19 9.73453 11.62 10.1745 12.14C10.6245 12.66 11.1045 13.19 11.6245 13.72C12.1645 14.25 12.6845 14.74 13.2145 15.19C13.7345 15.63 14.1645 15.93 14.5045 16.11C14.5545 16.13 14.6145 16.16 14.6845 16.19C14.7645 16.22 14.8445 16.23 14.9345 16.23C15.1045 16.23 15.2345 16.17 15.3445 16.06L16.1045 15.31C16.3545 15.06 16.5945 14.87 16.8245 14.75C17.0545 14.61 17.2845 14.54 17.5345 14.54C17.7245 14.54 17.9245 14.58 18.1445 14.67C18.3645 14.76 18.5945 14.89 18.8445 15.06L22.1545 17.41C22.4145 17.59 22.5945 17.8 22.7045 18.05C22.8045 18.3 22.8645 18.55 22.8645 18.83Z"
-        stroke="#D7D7D7"
-        strokeWidth="2"
-        strokeMiterlimit="10"
-      />
-    </svg>
-    <p style={{ margin: 0 }}> {data.Phone}</p>
-  </div>
-</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+              <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M18.1445 21H8.14453C5.14453 21 3.14453 19.5 3.14453 16V9C3.14453 5.5 5.14453 4 8.14453 4H18.1445C21.1445 4 23.1445 5.5 23.1445 9V16C23.1445 19.5 21.1445 21 18.1445 21Z"
+                  stroke="#D7D7D7"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M18.1445 9.5L15.0145 12C13.9845 12.82 12.2945 12.82 11.2645 12L8.14453 9.5"
+                  stroke="#D7D7D7"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <p style={{ margin: 0 }}> {data.Email}</p>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M22.8645 18.83C22.8645 19.19 22.7845 19.56 22.6145 19.92C22.4445 20.28 22.2245 20.62 21.9345 20.94C21.4445 21.48 20.9045 21.87 20.2945 22.12C19.6945 22.37 19.0445 22.5 18.3445 22.5C17.3245 22.5 16.2345 22.26 15.0845 21.77C13.9345 21.28 12.7845 20.62 11.6445 19.79C10.4945 18.95 9.40453 18.02 8.36453 16.99C7.33453 15.95 6.40453 14.86 5.57453 13.72C4.75453 12.58 4.09453 11.44 3.61453 10.31C3.13453 9.17 2.89453 8.08 2.89453 7.04C2.89453 6.36 3.01453 5.71 3.25453 5.11C3.49453 4.5 3.87453 3.94 4.40453 3.44C5.04453 2.81 5.74453 2.5 6.48453 2.5C6.76453 2.5 7.04453 2.56 7.29453 2.68C7.55453 2.8 7.78453 2.98 7.96453 3.24L10.2845 6.51C10.4645 6.76 10.5945 6.99 10.6845 7.21C10.7745 7.42 10.8245 7.63 10.8245 7.82C10.8245 8.06 10.7545 8.3 10.6145 8.53C10.4845 8.76 10.2945 9 10.0545 9.24L9.29453 10.03C9.18453 10.14 9.13453 10.27 9.13453 10.43C9.13453 10.51 9.14453 10.58 9.16453 10.66C9.19453 10.74 9.22453 10.8 9.24453 10.86C9.42453 11.19 9.73453 11.62 10.1745 12.14C10.6245 12.66 11.1045 13.19 11.6245 13.72C12.1645 14.25 12.6845 14.74 13.2145 15.19C13.7345 15.63 14.1645 15.93 14.5045 16.11C14.5545 16.13 14.6145 16.16 14.6845 16.19C14.7645 16.22 14.8445 16.23 14.9345 16.23C15.1045 16.23 15.2345 16.17 15.3445 16.06L16.1045 15.31C16.3545 15.06 16.5945 14.87 16.8245 14.75C17.0545 14.61 17.2845 14.54 17.5345 14.54C17.7245 14.54 17.9245 14.58 18.1445 14.67C18.3645 14.76 18.5945 14.89 18.8445 15.06L22.1545 17.41C22.4145 17.59 22.5945 17.8 22.7045 18.05C22.8045 18.3 22.8645 18.55 22.8645 18.83Z"
+                  stroke="#D7D7D7"
+                  strokeWidth="2"
+                  strokeMiterlimit="10"
+                />
+              </svg>
+              <p style={{ margin: 0 }}> {data.Phone}</p>
+            </div>
+          </div>
 
         </div>
 
         {/* Footer Bottom */}
         <div className="footer-bottom d-flex justify-content-between align-items-center flex-wrap mt-4">
-          <p className="mb-0">Copyright © 2025 All Rights Reserved</p>
+          <p className="mb-0">  Copyright © {new Date().getFullYear()} All Rights Reserved</p>
           <p className="mb-0">
             <a href="#">Privacy Policy</a>{" "}
             <a href="#">Term of Service</a>
@@ -171,6 +173,7 @@ return(<>
       </div>
     </footer>
 
-</>)}
+  </>)
+}
 
 export default GetCompanyInfoAllData;

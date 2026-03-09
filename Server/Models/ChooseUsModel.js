@@ -1,31 +1,50 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const ChooseUsHeaderSchema=new mongoose.Schema({
-
-
-_id:{type:String,required:true},
-CU_Tag:{type:String,required:true},
-CU_Heading:{type:String,required:true},
-CU_Description:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-
-
+const whyChooseUsSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Why Choose Us'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Description: {
+    type: String,
+    required: true
+  },
+  Cards: [{
+    CardHeading: {
+      type: String,
+      required: true
+    },
+    CardDescription: {
+      type: String,
+      required: true
+    },
+    IconPath: {
+      type: String,
+      required: false
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const ChooseUsSchema=new mongoose.Schema({
-
-
-
-_id:{type:String,required:true},
-CU_Heading:{type:String,required:true},
-CU_Description:{type:String,required:true},
-CU_Image:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-    
+whyChooseUsSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
 
-const ChooseUsHeaders=mongoose.model("ChooseUS",ChooseUsHeaderSchema,"ChooseUS");
-const ChooseUsD=mongoose.model("ChooseUSDetails",ChooseUsSchema,"ChooseUSDetails");
-export{ChooseUsHeaders,ChooseUsD};
+export default mongoose.model('WhyChooseUs', whyChooseUsSchema);

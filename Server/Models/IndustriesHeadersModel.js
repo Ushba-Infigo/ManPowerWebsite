@@ -1,70 +1,53 @@
-import mongoose  from "mongoose";
-//Schema 1
-const IndustriesServicesSchema= new mongoose.Schema({
+import mongoose from 'mongoose';
 
-    Industry_Heading:{
-
-        type:String,
-        required:true
+const industriesSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'Industries & Services'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Industries: [{
+    Name: {
+      type: String,
+      required: true,
+      enum: ['Telecommunication', 'Information Technology', 'Education', 'Healthcare']
     },
-    Industry_Tag:{
-
-        type:String,
-        required:true
+    IndustryHeading: {
+      type: String,
+      required: true
     },
-    CreatedAt:{
-        type:String,
-        required:true
+    Description: {
+      type: String,
+      required: true
     },
-    UpdateAt:{
-        type:String,
-        required:true
+    ImagePath: {
+      type: String,
+      required: false
+    },
+    Order: {
+      type: Number,
+      required: true
     }
-
-});
-//Schema 2
-const IndustriesServicesSchemaTABs= new mongoose.Schema({
-
-    Tab:{
-
-        type:String,
-        required:true
-    },
-    Tab_Description:{
-
-        type:String,
-        required:true
-    },
-    Tab_Bullets:{
-
-        type:String,
-        required:true
-    },
-    Tab_Heading:{
-
-        type:String,
-        required:true
-    }  ,
-    Tab_Image:{
-
-        type:String,
-        required:true
-    }
-    ,
-    CreatedAt:{
-        type:String,
-        required:true
-    },
-    UpdateAt:{
-        type:String,
-        required:true
-    }
-
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
+industriesSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
+});
 
+const IndustriesModel = mongoose.model("Industries", industriesSchema);
 
-//Force it to use the "IndustriesandServices" collection exactly as in Compass
-const  IndustriesandServicesmodel= mongoose.model("IndustriesandServices",IndustriesServicesSchema,"IndustriesandServices");
-const  Industry_TabsModel=  mongoose.model("Industriesand ServicesTabs",IndustriesServicesSchemaTABs,"Industriesand ServicesTabs");
-export{IndustriesandServicesmodel,Industry_TabsModel}
+export default IndustriesModel;

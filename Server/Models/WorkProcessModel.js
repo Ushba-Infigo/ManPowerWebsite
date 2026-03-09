@@ -1,30 +1,43 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const WorkProcessHeaderSchema=new mongoose.Schema({
-
-
-_id:{type:String,required:true},
-W_Tag:{type:String,required:true},
-W_Heading:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-
-
+const howItWorksSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'How IT WORKS'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Processes: [{
+    ProcessHeading: {
+      type: String,
+      required: true
+    },
+    Description: {
+      type: String,
+      required: true
+    }, 
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const WorkProcessSchema=new mongoose.Schema({
-
-
-
-_id:{type:String,required:true},
-RR_Heading:{type:String,required:true},
-RR_Description:{type:String,required:true},
-RR_Image:{type:String,required:true},
-CreatedAt:{type:String,required:true},
-UpdatedAt:{type:String,required:true}
-    
+howItWorksSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
 
-const WorkProcessHeaders=mongoose.model("WorkProcessHeader",WorkProcessHeaderSchema,"WorkProcessHeader");
-const WorkProcessD=mongoose.model("WorkProcess",WorkProcessHeaderSchema,"WorkProcess");
-export{WorkProcessHeaders,WorkProcessD};
+export default mongoose.model('HowItWorks', howItWorksSchema);
+

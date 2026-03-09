@@ -1,5 +1,5 @@
-import {CompanyCaltures} from '../Models/CompanyCaltureModel.js'
-import {CompanyCalturesDetail} from '../Models/CompanyCaltureDetailModel.js'
+import CompanyCaltures from '../Models/CompanyCaltureModel.js'
+import CompanyCalturesDetail from '../Models/CompanyCaltureDetailModel.js'
 
 export const GetCompanyCaltureData=async(req,res)=>{
 

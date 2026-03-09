@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const GetTeleData = () => {
+  const refreshKey = useContext(RefreshContext);
   const [TeleData, setTeleData] = useState([]);
   const [TechnologiesData, setTechnologiesData] = useState([]);
   const [ContactInfoData, setContactInfoData] = useState([]);
@@ -12,19 +14,19 @@ const GetTeleData = () => {
     const fetchData = async () => {
       try {
         const [EducationRes, ContactRes] = await Promise.all([
-          axios.get("http://localhost:8001/api/GetTelecommunication"),
-         // axios.get("http://localhost:8001/api/GetTechnologies"),
-          axios.get("http://localhost:8001/api/GetContactInfo"),
+          axios.get("http://83.147.38.201:8001/api/GetTelecommunication"),
+          // axios.get("http://83.147.38.201:8001/api/GetTechnologies"),
+          axios.get("http://83.147.38.201:8001/api/GetContactInfo"),
         ]);
         setTeleData(EducationRes.data);
-       // setTechnologiesData(TechRes.data);
+        // setTechnologiesData(TechRes.data);
         setContactInfoData(ContactRes.data);
       } catch (error) {
         console.log("Error fetching data:", error);
       }
     };
     fetchData();
-  }, []);
+  }, [refreshKey]);
 
   if (TeleData.length === 0) return null;
 
@@ -46,7 +48,7 @@ const GetTeleData = () => {
 
       <center style={{ marginTop: "-84px" }}>
         <span>
-          <Link to="/" className="home" style={{textDecoration: "none",cursor:"pointer"}}>Home</Link>&nbsp;&gt;&nbsp;
+          <Link to="/" className="home" style={{ textDecoration: "none", cursor: "pointer" }}>Home</Link>&nbsp;&gt;&nbsp;
           <span className="contact">Telecommunication</span>
         </span>
       </center>
@@ -61,7 +63,7 @@ const GetTeleData = () => {
       </div>
       <br />
 
-      <div className="container-fluid py-4" style={{ paddingInline: "70px" }}>
+      <div className="container-fluid" style={{ paddingInline: "70px" }}>
         <div className="row" style={{ margin: 0 }}>
           {/* Left Column */}
           <div className="col-md-3 col-12" style={{ padding: "10px", marginLeft: "40px" }}>
@@ -69,9 +71,8 @@ const GetTeleData = () => {
               <h4 className="fw-bold mb-4 ser">All Services</h4>
               {ServicesList.map((service, index) => (
                 <div
-                  className={`service-box p-3 mb-3 d-flex justify-content-between align-items-center ${
-                    activeServiceIndex === index ? "active-service" : ""
-                  }`}
+                  className={`service-box p-3 mb-3 d-flex justify-content-between align-items-center ${activeServiceIndex === index ? "active-service" : ""
+                    }`}
                   key={service._id || index}
                   onClick={() => setActiveServiceIndex(index)}
                   style={{
@@ -137,17 +138,17 @@ const GetTeleData = () => {
               {ServicesList[activeServiceIndex]?.sections?.map((section, secIndex) => (
                 <div key={secIndex}>
                   {section.images?.[0] && (
-                   <div className="image-frame">
-                    <img
-                src={
-                         section.images[0]
-                         ?`${process.env.PUBLIC_URL}/img/${ section.images[0]}`
-                         :`${process.env.PUBLIC_URL}/img/benefits.png}`
+                    <div className="image-frame">
+                      <img
+                        src={
+                          section.images[0]
+                            ? `${process.env.PUBLIC_URL}/img/${section.images[0]}`
+                            : `${process.env.PUBLIC_URL}/img/benefits.png}`
                         }
-                     alt={section.heading}
-                 className="img-fluid image-full-height"
-              />
-                  </div>
+                        alt={section.heading}
+                        className="img-fluid image-full-height"
+                      />
+                    </div>
                   )}
                   <p className="expose">{section.heading}</p>
                   {section.description?.map((desc, i) => (
@@ -169,40 +170,40 @@ const GetTeleData = () => {
               ))}
 
               {/* FAQs */}
-          {ServicesList[activeServiceIndex]?.faqs && (
-  <div className="mt-4">
-    <p className="expose">{ServicesList[activeServiceIndex].faqs.Heading}</p>
-    <p className="expo-smal">{ServicesList[activeServiceIndex].faqs.Description}</p>
+              {ServicesList[activeServiceIndex]?.faqs && (
+                <div className="mt-4">
+                  <p className="expose">{ServicesList[activeServiceIndex].faqs.Heading}</p>
+                  <p className="expo-smal">{ServicesList[activeServiceIndex].faqs.Description}</p>
 
-    {/* UNIQUE ID — this is the magic fix */}
-    <div id={`customFaqAccordion-${activeServiceIndex}`}>
-      
-      {ServicesList[activeServiceIndex].faqs.questions?.map((q, i) => (
-        <div className="faq-item mb-3" key={q.id || i}>
-          <button
-            className="faq-header collapsed"
-            data-bs-toggle="collapse"
-            data-bs-target={`#faqBox${q.id || i}`}
-            aria-expanded="false"
-          >
-            {q.q}
-            <span className="faq-arrow"></span>
-          </button>
+                  {/* UNIQUE ID — this is the magic fix */}
+                  <div id={`customFaqAccordion-${activeServiceIndex}`}>
 
-          <div
-            id={`faqBox${q.id || i}`}
-            className="faq-body collapse"
-            data-bs-parent={`#customFaqAccordion-${activeServiceIndex}`}
-          >
-            
-              <p>{q.a}</p>
-          
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                    {ServicesList[activeServiceIndex].faqs.questions?.map((q, i) => (
+                      <div className="faq-item mb-3" key={q.id || i}>
+                        <button
+                          className="faq-header collapsed"
+                          data-bs-toggle="collapse"
+                          data-bs-target={`#faqBox${q.id || i}`}
+                          aria-expanded="false"
+                        >
+                          {q.q}
+                          <span className="faq-arrow"></span>
+                        </button>
+
+                        <div
+                          id={`faqBox${q.id || i}`}
+                          className="faq-body collapse"
+                          data-bs-parent={`#customFaqAccordion-${activeServiceIndex}`}
+                        >
+
+                          <p>{q.a}</p>
+
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

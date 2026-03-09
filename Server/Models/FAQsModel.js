@@ -1,22 +1,42 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const FAQsListSchema=new mongoose.Schema({
-
-_id:{type:String,required:true},
-Question:{type:String,required:true},
-Answer:{type:String,required:true},
-
+const faqsSchema = new mongoose.Schema({
+  TagHeading: {
+    type: String,
+    required: true,
+    default: 'FAQs'
+  },
+  MainHeading: {
+    type: String,
+    required: true
+  },
+  Accordions: [{
+    AccordionHeading: {
+      type: String,
+      required: true
+    },
+    Description: {
+      type: String,
+      required: true
+    },
+    Order: {
+      type: Number,
+      required: true
+    }
+  }],
+  CreatedAt: {
+    type: Date,
+    default: Date.now
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-const FAQsSchema = new mongoose.Schema({
- 
-_id:{type:String,required:true},
-FAQ_Heading:{type:String,required:true},
-FAQ_SubHeading:{type:String,required:true},
-FAQ_List:[FAQsListSchema],
-CreatedAt: { type: Date, default: Date.now },
-UpdatedAt: { type: Date, default: Date.now }
+faqsSchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  next();
 });
-const FAQs = mongoose.model('FAQs', FAQsSchema, 'FAQs');
 
-export{FAQs};
+export default mongoose.model('FAQs', faqsSchema);

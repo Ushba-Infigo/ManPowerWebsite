@@ -1,173 +1,184 @@
-
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { RefreshContext } from "../App";
 import axios from "axios";
 
-const GetReviewAllData=()=>{
+const GetReviewAllData = () => {
 
-const [Reviews,setReview]=useState([]);
-const [ReviewsDetail,setReviewDetail]=useState([]);
-const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+  const refreshKey = useContext(RefreshContext);
+  const [reviews, setReviews] = useState([]);
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
 
-useEffect(()=>{
+  useEffect(() => {
 
-    const GetReviews=async()=>{
-try{
+    const fetchReviews = async () => {
+      try {
+        debugger
+        const res = await axios.get("http://83.147.38.201:8001/api/reviews");
 
-    const GetReviewAPI= await axios.get('http://localhost:8001/api/GetClientsReviews');
-    setReview(GetReviewAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
-    }
-    const GetReviewsDetail=async()=>{
-try{
+        // show only active reviews
+        
+    const reviewArray = Array.isArray(res.data) ? res.data : res.data.data;
 
-    const GetReviewDetailAPI= await axios.get('http://localhost:8001/api/GetClientsReviewsDetail');
-    setReviewDetail(GetReviewDetailAPI.data);
-   }
-catch(error)
-{
-console.log("error while fetching")}
-        }
-GetReviews();GetReviewsDetail();
-},[]);
+    const activeReviews = reviewArray.filter(r => r.IsActive === true);
+
+        setReviews(activeReviews);
+      } catch (error) {
+        console.log("error while fetching reviews");
+      }
+    };
+
+    fetchReviews();
+
+  }, [refreshKey]);
 
 
 
+  useEffect(() => {
 
+    const items = document.querySelectorAll(".profile-item");
+    const indicatorDots = document.getElementById("indicatorDots");
 
- useEffect(() => {
-  const items = document.querySelectorAll(".profile-item");
-  const indicatorDots = document.getElementById("indicatorDots");
+    if (!items.length || !indicatorDots) return;
 
-  if (!items.length || !indicatorDots) return;
+    let startIndex = 0;
 
-  let startIndex = 0;
+    indicatorDots.innerHTML = "";
 
-  // Create dots only once
-  indicatorDots.innerHTML = "";
+    items.forEach((_, index) => {
+      const dot = document.createElement("span");
+      dot.classList.add("dot");
 
-  items.forEach((_, index) => {
-    const dot = document.createElement("span");
-    dot.classList.add("dot");
-    if (index === 0) dot.classList.add("active-dot");
-    dot.dataset.index = index;
-    indicatorDots.appendChild(dot);
-  });
+      if (index === 0) dot.classList.add("active-dot");
 
-  const dots = indicatorDots.querySelectorAll(".dot");
+      dot.dataset.index = index;
 
-  function updateActive() {
-  items.forEach(item => item.classList.remove("active"));
-
-  const visible = Array.from(items).map((_, i) => (startIndex + i) % items.length);
-
-  visible.forEach((index, position) => {
-    items[index].style.order = position;
-    items[index].style.opacity = "1";
-
-    if (position === 0 || position === visible.length - 1) {
-      items[index].style.opacity = "0.4";
-    }
-  });
-
-  const activeIndex = visible[3];
-  items[activeIndex].classList.add("active");
-  items[activeIndex].style.opacity = "1";
-
-  dots.forEach(dot => dot.classList.remove("active-dot"));
-  dots[startIndex].classList.add("active-dot");
-
-  // ✅ Update active review index here
-  setActiveReviewIndex(activeIndex);
-}
-  const intervalId = setInterval(() => {
-    startIndex = (startIndex + 1) % items.length;
-    updateActive();
-  }, 2500);
-
-  updateActive();
-
-  dots.forEach(dot => {
-    dot.addEventListener("click", e => {
-      startIndex = parseInt(e.target.dataset.index);
-      updateActive();
+      indicatorDots.appendChild(dot);
     });
-  });
 
-  // Cleanup
-  return () => clearInterval(intervalId);
+    const dots = indicatorDots.querySelectorAll(".dot");
 
-}, [ReviewsDetail]);
-if(Reviews.length==0){
-    return null
-}
- const data=Reviews[0];
- const datad=ReviewsDetail[0];
- const dataDetail=datad?.Review_List||[];
-return(
+    function updateActive() {
+
+      items.forEach(item => item.classList.remove("active"));
+
+      const visible = Array.from(items).map((_, i) => (startIndex + i) % items.length);
+
+      visible.forEach((index, position) => {
+
+        items[index].style.order = position;
+        items[index].style.opacity = "1";
+
+        if (position === 0 || position === visible.length - 1) {
+          items[index].style.opacity = "0.4";
+        }
+
+      });
+
+      const activeIndex = visible[0];
+
+      items[activeIndex].classList.add("active");
+      items[activeIndex].style.opacity = "1";
+
+      dots.forEach(dot => dot.classList.remove("active-dot"));
+      dots[startIndex].classList.add("active-dot");
+
+      setActiveReviewIndex(activeIndex);
+    }
+
+    const intervalId = setInterval(() => {
+
+      startIndex = (startIndex + 1) % items.length;
+
+      updateActive();
+
+    }, 2500);
+
+    updateActive();
+
+    dots.forEach(dot => {
+
+      dot.addEventListener("click", e => {
+
+        startIndex = parseInt(e.target.dataset.index);
+
+        updateActive();
+
+      });
+
+    });
+
+    return () => clearInterval(intervalId);
+
+  }, [reviews]);
+
+
+
+  if (reviews.length === 0) return null;
+
+  return (
 
     <>
-    <section className="testimonial-section py-16">
-      <div className="text-center">
-     <center><h6 class="section-subtitlee">{data.R_Tag}</h6></center><br/>
-      </div>
-      <br />
-      <h2 className="check" style={{fontWeight: "600 !important;"}}>
-        {data.R_Heading}
-      </h2>
-      <p className="subtitle text-center">
-       {data.R_SubHeading}
-      </p>
-      <div className="profile-images">
-        {dataDetail.map((d,index)=>(
-        <div className="profile-item" data-index="0" key={index}>
-          <img 
-          src={
-                              d.ClientImage
-                              ?`${process.env.PUBLIC_URL}/img/${d.ClientImage}`
-                              :`${process.env.PUBLIC_URL}/img/benefits.png}`
-                              }
-          alt="profile1" />
-          <div className="desc">
-            <h6>{d.ClientName}</h6>
-            <p>{d.ClientDesignation}</p>
-          </div>
+      <section className="testimonial-section py-16">
+          <div className="text-center">
+          <center><h6 class="section-subtitlee">Reviews</h6>
+          </center>
         </div>
-        ))}
+        <h2 className="check" style={{ fontWeight: "600" }}> Check What Our Client Are Saying </h2>
+       
+        <div className="profile-images">
 
-      </div>
-<br />
-<div className="testimonial-box mt-4">
-  <div className="stars mb-2">
-    <i className="bi bi-star-fill"></i>
-    <i className="bi bi-star-fill"></i>
-    <i className="bi bi-star-fill"></i>
-    <i className="bi bi-star-fill"></i>
-    <i className="bi bi-star-fill"></i>
-  </div>
-  <br />
-  <p id="clientText">
-    {dataDetail[activeReviewIndex]?.ReviewText}
-  </p>
-  <br />
-  <svg width={74} height={22}>
-    <rect fill="url(#pattern0_935_7460)" />
-    <defs>
-      <pattern id="pattern0_935_7460">
-        <use xlinkHref="#image0_935_7460" />
-      </pattern>
-      <image id="image0_935_7460" xlinkHref="data:image/png;base64,..." />
-    </defs>
-  </svg>
-</div>
+          {reviews.map((review, index) => (
 
-  <div className="d-flex justify-content-center mt-3 gap-2" id="indicatorDots"></div>
-    </section>
-    
+            <div className="profile-item" key={review._id}>
+
+              <img
+                src={
+                  review.ImagePath
+                    ? `http://83.147.38.201:8002/uploads/reviews/${review.ImagePath}`
+                    : `${process.env.PUBLIC_URL}/img/benefits.png`
+                }
+                alt={review.Name}
+              />
+
+              <div className="desc">
+                <h6>{review.Name}</h6>
+                <p>{review.Bio}</p>
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+        <br />
+
+        <div className="testimonial-box mt-4">
+
+          <div className="stars mb-2">
+
+            {[...Array(reviews[activeReviewIndex]?.Stars || 0)].map((_, i) => (
+              <i key={i} className="bi bi-star-fill"></i>
+            ))}
+
+          </div>
+
+          <br />
+
+          <p id="clientText">
+            {reviews[activeReviewIndex]?.Description}
+          </p>
+
+        </div>
+
+        <div
+          className="d-flex justify-content-center mt-3 gap-2"
+          id="indicatorDots"
+        ></div>
+
+      </section>
     </>
-)
+  );
+};
 
-}
 export default GetReviewAllData;

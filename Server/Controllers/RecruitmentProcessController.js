@@ -1,9 +1,9 @@
-import {RecruitmentProcess,RecruitmentRequirements} from '../Models/RecruitmentProcessModel.js'
+import onboardingSchema from '../Models/RecruitmentProcessModel.js'
 
 export const GetRecruitmentProcessData=async(req,res)=>{
 
     try{
-        const GetRecruitmentProcessAll=await RecruitmentProcess.find();
+        const GetRecruitmentProcessAll=await onboardingSchema.find();
         if(!GetRecruitmentProcessAll||GetRecruitmentProcessAll.length==0){
             return res.status(404).json({message:"Data Not Found"})
         }
