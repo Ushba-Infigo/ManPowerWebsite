@@ -18,7 +18,7 @@ console.log("Mongo URI:", process.env.MONGO_URI);
 
 
 app.use(cors({
-  origin: "http://83.147.38.201:8009",
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
@@ -26,7 +26,7 @@ app.use(cors({
 
 // Global header fallback
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://83.147.38.201:8009");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://83.147.38.201:8009",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
