@@ -6,7 +6,7 @@ const sitemapRouter = express.Router();
 
 sitemapRouter.get("/sitemap.xml", async (req, res) => {
     try {
-        const hostname = "http://83.147.38.201:8009"; // Change to your production domain when deploying
+        const hostname = "http://localhost:8009"; // Change to your production domain when deploying
         const sitemap = new SitemapStream({ hostname });
 
         // STATIC PAGES

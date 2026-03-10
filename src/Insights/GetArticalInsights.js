@@ -17,12 +17,12 @@ const GetArticalInsightsData = () => {
   useEffect(() => {
     const fetchInsights = async () => {
       try {
-        const response = await axios.get("http://83.147.38.201:8001/api/GetInsights");
+        const response = await axios.get("http://localhost:8001/api/GetInsights");
         
         if (response.data && response.data.length > 0) {
           const insight = response.data[0]; // take the first object
           setInsightsData(insight);
-          const Userresponse = await axios.get(`http://83.147.38.201:8001/api/GetUser/${userId}`);
+          const Userresponse = await axios.get(`http://localhost:8001/api/GetUser/${userId}`);
           // console.log(Userresponse.data); 
           setuser(Userresponse.data);
           const idx = parseInt(index, 10);
@@ -67,7 +67,7 @@ const GetArticalInsightsData = () => {
             <img
               src={
                 card.ImagePath
-                  ? `http://83.147.38.201:8002/uploads/insights/${card.ImagePath}`
+                  ? `http://localhost:8002/uploads/insights/${card.ImagePath}`
                   : `${process.env.PUBLIC_URL}/img/card1.png`
               }
               className="hon"
@@ -90,7 +90,7 @@ const GetArticalInsightsData = () => {
               <img
                 src={
                   userdata?.ProfilePic
-                    ? `http://83.147.38.201:8002${userdata?.ProfilePic}`
+                    ? `http://localhost:8002${userdata?.ProfilePic}`
                     : `${process.env.PUBLIC_URL}/img/card1.png`
                 }
                 alt="Profile"

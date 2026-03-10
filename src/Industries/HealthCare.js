@@ -14,9 +14,9 @@ const GetHealthCareData = () => {
     const fetchData = async () => {
       try {
         const [HealthCareRes, OpeningHoursRes, ContactRes] = await Promise.all([
-          axios.get("http://83.147.38.201:8001/api/GetHealthCare"),
-          axios.get("http://83.147.38.201:8001/api/GetOpeningHours"),
-          axios.get("http://83.147.38.201:8001/api/GetContactInfo"),
+          axios.get("http://localhost:8001/api/GetHealthCare"),
+          axios.get("http://localhost:8001/api/GetOpeningHours"),
+          axios.get("http://localhost:8001/api/GetContactInfo"),
         ]);
         setHealthCareData(HealthCareRes.data);
         setOpeningHoursData(OpeningHoursRes.data);

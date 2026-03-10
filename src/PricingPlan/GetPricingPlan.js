@@ -34,7 +34,7 @@ const GetPricingPlanData = () => {
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
-        const { data } = await axios.get("http://83.147.38.201:8001/api/GetPricingPlans");
+        const { data } = await axios.get("http://localhost:8001/api/GetPricingPlans");
         setPricingPlans(data);
 
         // Extract unique industries and locations

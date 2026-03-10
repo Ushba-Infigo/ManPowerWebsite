@@ -10,7 +10,7 @@ const GetIndustryData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://83.147.38.201:8001/api/GetIndustrydetailByName/${industryName}`);
+        const res = await axios.get(`http://localhost:8001/api/GetIndustrydetailByName/${industryName}`);
         setIndustryData(res.data);
       } catch (error) {
         console.log("Error fetching industry data:", error);
@@ -105,7 +105,7 @@ const GetIndustryData = () => {
                   {ServicesList[activeServiceIndex].Section1.AttachmentPath && (
                     <div className="image-frame">
                       <img
-                        src={`http://83.147.38.201:8002/uploads/industries-detail/${ServicesList[activeServiceIndex].Section1.AttachmentPath}`}
+                        src={`http://localhost:8002/uploads/industries-detail/${ServicesList[activeServiceIndex].Section1.AttachmentPath}`}
                         alt={ServicesList[activeServiceIndex].Section1.Heading}
                         className="img-fluid image-full-height"
                       />
@@ -125,7 +125,7 @@ const GetIndustryData = () => {
                     {/* FIRST IMAGE (Floated Left) */}
                     {ServicesList[activeServiceIndex].Section2.Images?.[0] && (
                       <img
-                        src={`http://83.147.38.201:8002/uploads/industries-detail/${ServicesList[activeServiceIndex].Section2.Images[0].ImagePath}`}
+                        src={`http://localhost:8002/uploads/industries-detail/${ServicesList[activeServiceIndex].Section2.Images[0].ImagePath}`}
                         alt="section2-main"
                         className="img-fluid huz mb-3 me-4"
                         style={{ float: "left", maxWidth: "40%", height: "auto", borderRadius: "8px" }}
@@ -158,7 +158,7 @@ const GetIndustryData = () => {
                         .map((imgObj, index) => (
                           <img
                             key={index}
-                            src={`http://83.147.38.201:8002/uploads/industries-detail/${imgObj.ImagePath}`}
+                            src={`http://localhost:8002/uploads/industries-detail/${imgObj.ImagePath}`}
                             alt={`section2-${index + 1}`}
                             className="img-fluid huz"
                           />

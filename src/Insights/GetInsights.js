@@ -11,7 +11,7 @@ const GetInsightsData = () => {
 
   const fetchInsights = async () => {
     try {
-      const res = await axios.get("http://83.147.38.201:8001/api/GetInsights");
+      const res = await axios.get("http://localhost:8001/api/GetInsights");
       const data = res.data;
 
       // Collect unique UserIds from all InsightCards
@@ -23,7 +23,7 @@ const GetInsightsData = () => {
       await Promise.all(
         uniqueUserIds.map(async (uid) => {
           try {
-            const userRes = await axios.get(`http://83.147.38.201:8001/api/GetUser/${uid}`);
+            const userRes = await axios.get(`http://localhost:8001/api/GetUser/${uid}`);
             userMap[uid] = userRes.data;
           } catch (err) {
             console.log(`Error fetching user ${uid}:`, err);
@@ -51,7 +51,7 @@ const GetInsightsData = () => {
     fetchInsights();
 
     // Listen for real-time updates from CMS changing DB
-    const socket = io("http://83.147.38.201:8001");
+    const socket = io("http://localhost:8001");
 
     socket.on("insightsUpdated", () => {
       console.log("Real-time update received! Refreshing insights...");
@@ -88,7 +88,7 @@ const GetInsightsData = () => {
                 <img
                   src={
                     insight.ImagePath
-                      ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                      ? `http://localhost:8002/uploads/insights/${insight.ImagePath}`
                       : `${process.env.PUBLIC_URL}/img/card1.png`
                   }
                   className="card-img-top p-3"
@@ -132,7 +132,7 @@ const GetInsightsData = () => {
                     <img
                       src={
                         insight.UserData?.ProfilePic
-                          ? `http://83.147.38.201:8002${insight.UserData.ProfilePic}`
+                          ? `http://localhost:8002${insight.UserData.ProfilePic}`
                           : `${process.env.PUBLIC_URL}/img/inner.png`
                       }
                       alt="Author"

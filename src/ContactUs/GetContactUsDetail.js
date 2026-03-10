@@ -27,7 +27,7 @@ const GetContactUsDetailData = () => {
   const handleSubmit = async (e) => {
     
     e.preventDefault();
-    await axios.post("http://83.147.38.201:8001/api/consulation", formData);
+    await axios.post("http://localhost:8001/api/consulation", formData);
     setSuccess("Consultation Submitted Successfully!");
   };
   useEffect(() => {
@@ -48,7 +48,7 @@ const GetContactUsDetailData = () => {
     const fetchContactUs = async () => {
       try {
         const res = await axios.get(
-          `http://83.147.38.201:8001/api/GetContactUsDetail?country=${selectedCountry}`
+          `http://localhost:8001/api/GetContactUsDetail?country=${selectedCountry}`
         );
         setContactUs(res.data);
       } catch (error) {

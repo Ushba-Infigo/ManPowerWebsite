@@ -9,7 +9,7 @@ const GetConsultationBannerData = () => {
   useEffect(() => {
     const fetchCallToAction = async () => {
       try {
-        const { data } = await axios.get(`http://83.147.38.201:8001/api/GetCompanyInfo?country=${selectedCountry}`);
+        const { data } = await axios.get(`http://localhost:8001/api/GetCompanyInfo?country=${selectedCountry}`);
         if (data && data.length > 0) {
           setCallToAction(data[0]);
         }

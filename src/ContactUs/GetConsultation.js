@@ -6,7 +6,7 @@ const ConsultationList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get("http://83.147.38.201:8001/api/consulation");
+      const res = await axios.get("http://localhost:8001/api/consulation");
       setConsultations(res.data);
     };
     fetchData();

@@ -28,7 +28,7 @@ const GetChooseUsData = ({
     const fetchChooseUs = async () => {
       try {
         const { data } = await axios.get(
-          "http://83.147.38.201:8001/api/GetChooseUs"
+          "http://localhost:8001/api/GetChooseUs"
         );
         setChooseUs(data);
       } catch (error) {
@@ -74,7 +74,7 @@ const GetChooseUsData = ({
                         <rect x="0.5" y="0.5" width="65" height="65" rx="32" fill="#3248B8" />
                         <rect x='0.5' y='0.5' width="65" height="65" rx="32" stroke="#52B7E8" />
                         <image
-                          href={`http://83.147.38.201:8002/uploads/why-choose-us/${detail.IconPath}`}
+                          href={`http://localhost:8002/uploads/why-choose-us/${detail.IconPath}`}
                           x="14"
                           y="14"
                           width="36"

@@ -10,7 +10,7 @@ const GetWorkProcessData = () => {
     const fetchHowItWorks = async () => {
       try {
         const { data } = await axios.get(
-          "http://83.147.38.201:8001/api/GetHowItWorks"
+          "http://localhost:8001/api/GetHowItWorks"
         );
         setHowItWorks(data[0]); // single document
       } catch (error) {

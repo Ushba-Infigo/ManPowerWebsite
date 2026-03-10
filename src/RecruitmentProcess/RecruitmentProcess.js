@@ -10,7 +10,7 @@ const GetRecruitmentProcessAllData = () => {
     const getOnboarding = async () => {
       try {
         const response = await axios.get(
-          "http://83.147.38.201:8001/api/GetRecruitmentProcess"
+          "http://localhost:8001/api/GetRecruitmentProcess"
         );
         setOnboarding(response.data);
       } catch (error) {
@@ -84,7 +84,7 @@ const GetRecruitmentProcessAllData = () => {
                       <img
                         src={
                           card.IconPath
-                            ? `http://83.147.38.201:8002/uploads/onboarding/${card.IconPath}`
+                            ? `http://localhost:8002/uploads/onboarding/${card.IconPath}`
                             : `${process.env.PUBLIC_URL}/img/logo1.png`
                         }
                         alt={card.CardHeading}

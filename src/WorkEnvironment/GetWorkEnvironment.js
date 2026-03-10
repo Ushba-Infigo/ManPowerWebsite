@@ -11,7 +11,7 @@ const GetWorkEnvironmentData = () => {
     const fetchWorkEnvironment = async () => {
       try {
         const response = await axios.get(
-          "http://83.147.38.201:8001/api/GetWorkEnvironment"
+          "http://localhost:8001/api/GetWorkEnvironment"
         );
         setWorkEnvironment(response.data);
       } catch (error) {
@@ -59,7 +59,7 @@ const GetWorkEnvironmentData = () => {
                   <img
                     src={
                       img.ImagePath
-                        ? `http://83.147.38.201:8002/uploads/work-environment/${img.ImagePath}`
+                        ? `http://localhost:8002/uploads/work-environment/${img.ImagePath}`
                         : `${process.env.PUBLIC_URL}/img/2ndb.png`
                     }
                     alt="Work Environment"

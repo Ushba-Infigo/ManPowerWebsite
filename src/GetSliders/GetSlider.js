@@ -22,7 +22,7 @@ const GetSlidersData = () => {
 
       try {
         
-        const response = await axios.get("http://83.147.38.201:8001/api/GetSlider");
+        const response = await axios.get("http://localhost:8001/api/GetSlider");
         setSliders(response.data);
         //console.log("Fetched sliders:", response.data);
       }
@@ -97,7 +97,7 @@ const GetSlidersData = () => {
                         <img
                           src={
                             slider.ImagePath
-                              ? `http://83.147.38.201:8002/uploads/sliders/${slider.ImagePath}`
+                              ? `http://localhost:8002/uploads/sliders/${slider.ImagePath}`
                               : `${process.env.PUBLIC_URL}/img/first.png`
                           }
                           className="custom-img"

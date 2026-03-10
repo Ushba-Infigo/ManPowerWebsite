@@ -48,7 +48,7 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const socket = io("http://83.147.38.201:8001");
+    const socket = io("http://localhost:8001");
     socket.on("contentUpdated", () => {
       console.log("Database updated! Triggering re-render for all components...");
       setRefreshKey(prev => prev + 1);

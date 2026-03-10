@@ -12,7 +12,7 @@ useEffect(()=>{
 
         try{
 
-    const GetCorefromAPI= await axios.get("http://83.147.38.201:8001/api/GetCore")
+    const GetCorefromAPI= await axios.get("http://localhost:8001/api/GetCore")
     setcore(GetCorefromAPI.data);
         }
         catch(error)
@@ -78,7 +78,7 @@ GetCore();
                 <img
                   src={
                     card.IconPath
-                      ? `http://83.147.38.201:8002/uploads/core-values/${card.IconPath}`
+                      ? `http://localhost:8002/uploads/core-values/${card.IconPath}`
                       : `${process.env.PUBLIC_URL}/img/2ndb.png`
                   }
                   alt={card.CardHeading}

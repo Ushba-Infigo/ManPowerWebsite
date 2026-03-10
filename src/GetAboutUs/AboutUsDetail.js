@@ -24,7 +24,7 @@ const GetAboutUsDetailData = () => {
 
       try {
 
-        const GetAboutUsfromAPI = await axios.get("http://83.147.38.201:8001/api/GetAboutUs")
+        const GetAboutUsfromAPI = await axios.get("http://localhost:8001/api/GetAboutUs")
         setaboutus(GetAboutUsfromAPI.data);
       }
       catch (error) {
@@ -36,7 +36,7 @@ const GetAboutUsDetailData = () => {
 
       try {
 
-        const GetAboutMissionfromAPI = await axios.get("http://83.147.38.201:8001/api/GetMission")
+        const GetAboutMissionfromAPI = await axios.get("http://localhost:8001/api/GetMission")
         setMission(GetAboutMissionfromAPI.data);
       }
       catch (error) {
@@ -48,7 +48,7 @@ const GetAboutUsDetailData = () => {
 
       try {
 
-        const GetCorefromAPI = await axios.get("http://83.147.38.201:8001/api/GetCore")
+        const GetCorefromAPI = await axios.get("http://localhost:8001/api/GetCore")
         setcore(GetCorefromAPI.data);
       }
       catch (error) {
@@ -61,7 +61,7 @@ const GetAboutUsDetailData = () => {
 
       try {
 
-        const GetHistoryfromAPI = await axios.get("http://83.147.38.201:8001/api/GetHistory")
+        const GetHistoryfromAPI = await axios.get("http://localhost:8001/api/GetHistory")
         setHistory(GetHistoryfromAPI.data);
       }
       catch (error) {
@@ -73,7 +73,7 @@ const GetAboutUsDetailData = () => {
     const GetCUHeaderData = async () => {
 
       try {
-        const { data } = await axios.get('http://83.147.38.201:8001/api/GetChooseUs')
+        const { data } = await axios.get('http://localhost:8001/api/GetChooseUs')
         setCUheader(data);
 
       }
@@ -87,7 +87,7 @@ const GetAboutUsDetailData = () => {
     const GetCUDetailData = async () => {
 
       try {
-        const { data } = await axios.get('http://83.147.38.201:8001/api/GetChooseUsDetail')
+        const { data } = await axios.get('http://localhost:8001/api/GetChooseUsDetail')
         setCUDetail(data);
 
       }
@@ -154,7 +154,7 @@ const GetAboutUsDetailData = () => {
             <img
               src={
                 data?.ImagePath
-                  ? `http://83.147.38.201:8002/uploads/about-us/${data.ImagePath}`
+                  ? `http://localhost:8002/uploads/about-us/${data.ImagePath}`
                   : `${process.env.PUBLIC_URL}/img/empowering.png`
               }
               alt="About Us"
@@ -279,7 +279,7 @@ const GetAboutUsDetailData = () => {
                   <div className="ima" >
                     <img className="gnb" src={
                       dataMission?.Tabs?.[tab.key]?.ImagePath
-                        ? `http://83.147.38.201:8002/uploads/mission/${dataMission.Tabs[tab.key].ImagePath}`
+                        ? `http://localhost:8002/uploads/mission/${dataMission.Tabs[tab.key].ImagePath}`
                         : `${process.env.PUBLIC_URL}/img/empowering.png`
                     }
                       alt="AboutMissions" />
@@ -354,7 +354,7 @@ const GetAboutUsDetailData = () => {
               <img
                 src={
                   dataMission?.Tabs?.[key]?.ImagePath
-                    ? `http://83.147.38.201:8002/uploads/mission/${dataMission.Tabs[key].ImagePath}`
+                    ? `http://localhost:8002/uploads/mission/${dataMission.Tabs[key].ImagePath}`
                     : `${process.env.PUBLIC_URL}/img/empowering.png`
                 }
                 alt={key}
@@ -438,7 +438,7 @@ const GetAboutUsDetailData = () => {
                     <img
                       src={
                         coreDetail?.IconPath
-                          ? `http://83.147.38.201:8002/uploads/core-values/${coreDetail.IconPath}`
+                          ? `http://localhost:8002/uploads/core-values/${coreDetail.IconPath}`
                           : `${process.env.PUBLIC_URL}/img/2ndb.png`
                       }
                       alt=""
@@ -508,7 +508,7 @@ const GetAboutUsDetailData = () => {
                             <img
                               src={
                                 section.ImagePath
-                                  ? `http://83.147.38.201:8002/uploads/history/${section.ImagePath}`
+                                  ? `http://localhost:8002/uploads/history/${section.ImagePath}`
                                   : `${process.env.PUBLIC_URL}/img/empowering.png`
                               }
                               className="w-100"
@@ -562,7 +562,7 @@ const GetAboutUsDetailData = () => {
                             <img
                               src={
                                 section.ImagePath
-                                  ? `http://83.147.38.201:8002/uploads/history/${section.ImagePath}`
+                                  ? `http://localhost:8002/uploads/history/${section.ImagePath}`
                                   : `${process.env.PUBLIC_URL}/img/empowering.png`
                               }
                               className="w-100"
@@ -616,7 +616,7 @@ const GetAboutUsDetailData = () => {
                           <img
                             src={
                               card.IconPath
-                                ? `http://83.147.38.201:8002/uploads/why-choose-us/${card.IconPath}`
+                                ? `http://localhost:8002/uploads/why-choose-us/${card.IconPath}`
                                 : `${process.env.PUBLIC_URL}/img/logo1.png`
                             }
                             alt="Icon"

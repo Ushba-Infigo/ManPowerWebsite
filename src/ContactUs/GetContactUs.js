@@ -12,8 +12,8 @@ const GetContactUsData = () => {
   useEffect(() => {
     const fetchContactData = async () => {
       try {
-       // const response = await axios.get("http://83.147.38.201:8001/api/GetCompanyInfo");
-           const response = await axios.get(`http://83.147.38.201:8001/api/GetCompanyInfo?country=${selectedCountry}`);
+       // const response = await axios.get("http://localhost:8001/api/GetCompanyInfo");
+           const response = await axios.get(`http://localhost:8001/api/GetCompanyInfo?country=${selectedCountry}`);
         setContactData(response.data);
       } catch (error) {
         console.log("Error while fetching contact data", error);
@@ -113,7 +113,7 @@ const GetContactUsData = () => {
             <img
               className="map"
               src={data?.AttachmentPath
-                ? `http://83.147.38.201:8002/uploads/get-in-touch/${data.AttachmentPath}`
+                ? `http://localhost:8002/uploads/get-in-touch/${data.AttachmentPath}`
                 : `${process.env.PUBLIC_URL}/img/logo1.png`}
               alt="Map"
               style={{ width: "100%", maxWidth: "834px", height: "510px" }}

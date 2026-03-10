@@ -14,9 +14,9 @@ const GetITData = () => {
     const fetchData = async () => {
       try {
         const [ITRes, TechRes, ContactRes] = await Promise.all([
-          axios.get("http://83.147.38.201:8001/api/GetIT"),
-          axios.get("http://83.147.38.201:8001/api/GetTechnologies"),
-          axios.get("http://83.147.38.201:8001/api/GetContactInfo"),
+          axios.get("http://localhost:8001/api/GetIT"),
+          axios.get("http://localhost:8001/api/GetTechnologies"),
+          axios.get("http://localhost:8001/api/GetContactInfo"),
         ]);
         setITData(ITRes.data);
         setTechnologiesData(TechRes.data);

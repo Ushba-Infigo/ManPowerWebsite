@@ -12,9 +12,9 @@ const GetEducationData = () => {
     const fetchData = async () => {
       try {
         const [EducationRes, ContactRes] = await Promise.all([
-          axios.get("http://83.147.38.201:8001/api/GetEducation"),
-          // axios.get("http://83.147.38.201:8001/api/GetTechnologies"),
-          axios.get("http://83.147.38.201:8001/api/GetContactInfo"),
+          axios.get("http://localhost:8001/api/GetEducation"),
+          // axios.get("http://localhost:8001/api/GetTechnologies"),
+          axios.get("http://localhost:8001/api/GetContactInfo"),
         ]);
         setEducationData(EducationRes.data);
         // setTechnologiesData(TechRes.data);

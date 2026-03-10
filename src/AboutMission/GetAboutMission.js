@@ -11,7 +11,7 @@ const GetMissionAllData = () => {
         const GetMission = async () => {
             try {
 
-                const GetMissionAPI = await axios.get('http://83.147.38.201:8001/api/GetMission');
+                const GetMissionAPI = await axios.get('http://localhost:8001/api/GetMission');
                 setMission(GetMissionAPI.data);
             }
             catch (error) {

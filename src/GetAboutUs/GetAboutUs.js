@@ -9,7 +9,7 @@ const GetAboutUsData = () => {
   useEffect(() => {
     const fetchAboutUs = async () => {
       try {
-        const response = await axios.get("http://83.147.38.201:8001/api/GetAboutUs");
+        const response = await axios.get("http://localhost:8001/api/GetAboutUs");
         setAboutUs(response.data);
       } catch (error) {
         console.log("Error while fetching About Us data:", error);
@@ -36,7 +36,7 @@ const GetAboutUsData = () => {
             src={
               data.ImagePath
 
-                ? `http://83.147.38.201:8002/uploads/about-us/${data.ImagePath}`
+                ? `http://localhost:8002/uploads/about-us/${data.ImagePath}`
                 : "fallback-image.png"
             }
             alt="About Us"

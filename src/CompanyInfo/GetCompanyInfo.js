@@ -13,7 +13,7 @@ const GetCompanyInfoAllData = () => {
     const GetCompanyInfo = async () => {
       try {
 
-        const GetCompanyInfoAPI = await axios.get(`http://83.147.38.201:8001/api/GetCompanyInfo?country=${selectedCountry}`);
+        const GetCompanyInfoAPI = await axios.get(`http://localhost:8001/api/GetCompanyInfo?country=${selectedCountry}`);
         setCompanyInfo(GetCompanyInfoAPI.data);
       }
       catch (error) {

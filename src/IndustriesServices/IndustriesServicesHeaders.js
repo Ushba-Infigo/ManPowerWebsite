@@ -9,7 +9,7 @@ const IndustriesServicesHeaders = () => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const res = await axios.get("http://83.147.38.201:8001/api/IndustriesHeader");
+        const res = await axios.get("http://localhost:8001/api/IndustriesHeader");
         setData(res.data[0]); // single document
       } catch (error) {
         console.log("Error fetching industries:", error);
@@ -159,7 +159,7 @@ const IndustriesServicesHeaders = () => {
                     <img
                       src={
                         item.ImagePath
-                          ? `http://83.147.38.201:8002/uploads/industries/${item.ImagePath}`
+                          ? `http://localhost:8002/uploads/industries/${item.ImagePath}`
                           : "/img/tab1.png"
                       }
                       alt={item.Name}

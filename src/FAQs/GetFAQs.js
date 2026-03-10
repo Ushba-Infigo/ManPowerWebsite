@@ -9,7 +9,7 @@ const GetFAQsData = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const { data } = await axios.get("http://83.147.38.201:8001/api/GetFAQs");
+        const { data } = await axios.get("http://localhost:8001/api/GetFAQs");
         setFaqs(data);
       } catch (error) {
         console.error("Error while fetching FAQs", error);

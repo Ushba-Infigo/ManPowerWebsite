@@ -9,7 +9,7 @@ const GetCompanyCaltureDetailData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://83.147.38.201:8001/api/GetCompanyCaltureDetail");
+        const res = await axios.get("http://localhost:8001/api/GetCompanyCaltureDetail");
         setCompanyCulture(res.data);
       } catch (err) {
         console.log("Error fetching:", err);
@@ -89,7 +89,7 @@ const GetCompanyCaltureDetailData = () => {
                 {images.map((img, index) => (
                   <div className="gallery-item col-sm-3 col-md-3 col-lg-3 imgsize" key={index}>
                     <img
-                      src={`http://83.147.38.201:8002/uploads/company-culture/${img.ImagePath}`}
+                      src={`http://localhost:8002/uploads/company-culture/${img.ImagePath}`}
                       alt={tabType}
                     />
                   </div>

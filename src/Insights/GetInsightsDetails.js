@@ -11,7 +11,7 @@ const GetInsightsDetailsData = () => {
 
   const fetchInsights = async () => {
     try {
-      const response = await axios.get("http://83.147.38.201:8001/api/GetInsights");
+      const response = await axios.get("http://localhost:8001/api/GetInsights");
       const data = response.data;
 
       // Collect unique UserIds from all InsightCards
@@ -23,7 +23,7 @@ const GetInsightsDetailsData = () => {
       await Promise.all(
         uniqueUserIds.map(async (uid) => {
           try {
-            const userRes = await axios.get(`http://83.147.38.201:8001/api/GetUser/${uid}`);
+            const userRes = await axios.get(`http://localhost:8001/api/GetUser/${uid}`);
             userMap[uid] = userRes.data;
           } catch (err) {
             console.log(`Error fetching user ${uid}:`, err);
@@ -50,7 +50,7 @@ const GetInsightsDetailsData = () => {
     fetchInsights();
 
     // Listen for real-time updates from backend
-    const socket = io("http://83.147.38.201:8001");
+    const socket = io("http://localhost:8001");
 
     socket.on("insightsUpdated", () => {
       console.log("Real-time update received! Refreshing insights details...");
@@ -146,7 +146,7 @@ const GetInsightsDetailsData = () => {
                 <img
                   src={
                     insight.ImagePath
-                      ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                      ? `http://localhost:8002/uploads/insights/${insight.ImagePath}`
                       : `${process.env.PUBLIC_URL}/img/card1.png`
                   }
                   alt="Insight"
@@ -218,7 +218,7 @@ const GetInsightsDetailsData = () => {
               <div className="card w-60">
                 <img
                   src={insight.ImagePath
-                    ? `http://83.147.38.201:8002/uploads/insights/${insight.ImagePath}`
+                    ? `http://localhost:8002/uploads/insights/${insight.ImagePath}`
                     : `${process.env.PUBLIC_URL}/img/card1.png`}
                   className="card-img-top p-3"
                   alt="Insight" style={{ height: "300px" }}
@@ -280,7 +280,7 @@ const GetInsightsDetailsData = () => {
                   <div className="d-flex align-items-center gap-2 mt-3">
                     <img
                       src={insight.UserData?.ProfilePic
-                        ? `http://83.147.38.201:8002${insight.UserData.ProfilePic}`
+                        ? `http://localhost:8002${insight.UserData.ProfilePic}`
                         : `${process.env.PUBLIC_URL}/img/inner.png`}
                       alt="Author"
                       width="40"

@@ -13,7 +13,7 @@ const GetClientsData = () => {
     const GetclientsAll = async () => {
       try {
 
-        const GetResponse = await axios.get("http://83.147.38.201:8001/api/GetClients");
+        const GetResponse = await axios.get("http://localhost:8001/api/GetClients");
         setclient(GetResponse.data);
       }
 
@@ -44,7 +44,7 @@ const GetClientsData = () => {
               <img
                 src={
                   client.ImagePath
-                    ? `http://83.147.38.201:8002/uploads/client-logos/${client.ImagePath}`
+                    ? `http://localhost:8002/uploads/client-logos/${client.ImagePath}`
                     : `${process.env.PUBLIC_URL}/img/logo1.png`
                 }
                 alt="Client Logo"

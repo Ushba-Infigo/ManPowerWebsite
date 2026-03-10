@@ -13,7 +13,7 @@ const GetReviewAllData = () => {
     const fetchReviews = async () => {
       try {
         debugger
-        const res = await axios.get("http://83.147.38.201:8001/api/reviews");
+        const res = await axios.get("http://localhost:8001/api/reviews");
 
         // show only active reviews
         
@@ -134,7 +134,7 @@ const GetReviewAllData = () => {
               <img
                 src={
                   review.ImagePath
-                    ? `http://83.147.38.201:8002/uploads/reviews/${review.ImagePath}`
+                    ? `http://localhost:8002/uploads/reviews/${review.ImagePath}`
                     : `${process.env.PUBLIC_URL}/img/benefits.png`
                 }
                 alt={review.Name}
